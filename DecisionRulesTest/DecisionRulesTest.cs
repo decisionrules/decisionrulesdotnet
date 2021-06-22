@@ -43,6 +43,36 @@ namespace DecisionRules.Tests
             Assert.Throws<NotPublishedException>(delegate { throw new NotPublishedException(); });
         }
 
+        [Test]
+        public void Called_Wrong_APIKEY_Should_Throw_NotUserException()
+        {
+            A.CallTo(() => drs.Solve<ResultModel>(A<string>.Ignored, A<string>.Ignored, A<string>.Ignored)).Throws<NoUserException>();
+
+            var result = drs.Solve<InputData, ResultModel>("ruleID", new InputData(), "1").Result;
+
+            Assert.Throws<NoUserException>(delegate { throw new NoUserException(); });
+        }
+
+        [Test]
+        public void Should_Throw_TooManyApiCalls()
+        {
+            A.CallTo(() => drs.Solve<ResultModel>(A<string>.Ignored, A<string>.Ignored, A<string>.Ignored)).Throws<TooManyApiCallsException>();
+
+            var result = drs.Solve<InputData, ResultModel>("ruleID", new InputData(), "1").Result;
+
+            Assert.Throws<TooManyApiCallsException>(delegate { throw new TooManyApiCallsException(); });
+        }
+
+        [Test]
+        public void Should_Throw_ServerErrorException()
+        {
+            A.CallTo(() => drs.Solve<ResultModel>(A<string>.Ignored, A<string>.Ignored, A<string>.Ignored)).Throws<ServerErrorException>();
+
+            var result = drs.Solve<InputData, ResultModel>("ruleID", new InputData(), "1").Result;
+
+            Assert.Throws<ServerErrorException>(delegate { throw new ServerErrorException(); });
+        }
+
     }
     class InputData
     {
