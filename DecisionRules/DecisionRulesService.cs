@@ -7,11 +7,13 @@ using System.Text;
 using DecisionRules.Exceptions;
 using System.Net;
 using System.Collections.Generic;
+using static DecisionRules.Model.SolverStragiesEnum;
 
 namespace DecisionRules
 {
     public class DecisionRulesService
     {
+
         private readonly HttpClient client = new HttpClient();
         private readonly RequestOption globalOptions;
 
@@ -20,13 +22,13 @@ namespace DecisionRules
             globalOptions = options;
         }
 
-        public async virtual Task<List<U>> Solve<T, U>(String ruleId, T inputData, String version= default)
+        public async virtual Task<List<U>> Solve<T, U>(String ruleId, T inputData, SolverStrategies solverStrategy, String version= default)
         {
             string url = UrlGenerator(ruleId, version);
 
             try
             {
-                var response = await ApiCall<T>(url, inputData);
+                var response = await ApiCall<T>(url, inputData, solverStrategy);
 
                 var result = response.Content.ReadAsStringAsync().Result;
 
@@ -50,13 +52,13 @@ namespace DecisionRules
             }
         }
 
-        public async virtual Task<List<U>> Solve<U>(String ruleId, string inputData, String version = default)
+        public async virtual Task<List<U>> Solve<U>(String ruleId, string inputData, SolverStrategies solverStrategy, String version = default)
         {
             string url = UrlGenerator(ruleId, version);
 
             try
             {
-                var response = await ApiCall<string>(url, inputData);
+                var response = await ApiCall<string>(url, inputData, solverStrategy);
 
                 return JsonSerializer.Deserialize<List<U>>(response.Content.ReadAsStringAsync().Result);
             }
@@ -82,9 +84,14 @@ namespace DecisionRules
             }
         }
 
-        private async Task<HttpResponseMessage> ApiCall<T>(string url, T inputData)
+        private async Task<HttpResponseMessage> ApiCall<T>(string url, T inputData, SolverStrategies solverStrategy)
         {
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", globalOptions.ApiKey);
+
+            if(solverStrategy != SolverStrategies.STANDARD)
+            {
+                client.DefaultRequestHeaders.Add("X-Strategy", solverStrategy.ToString());
+            }
 
             HttpResponseMessage response;
 

@@ -1,19 +1,20 @@
 ﻿using System;
+using static DecisionRules.Model.GeoLocationsEnum;
 
 namespace DecisionRules
 {
     public class RequestOption
     {
-        private readonly String geoloc;
+        private readonly GeoLocations geoloc;
         private readonly String apiKey;
 
-        public RequestOption(String apiKey, String geoloc = default)
+        public RequestOption(String apiKey, GeoLocations geoloc = GeoLocations.DEFAULT)
         {
             this.apiKey = apiKey;
             this.geoloc = geoloc;
         }
 
-        public String Geoloc
+        public GeoLocations Geoloc
         {
             get => geoloc;
         }

@@ -3,6 +3,8 @@ using DemoApp.Model;
 using DemoApp.Model.Out;
 using System;
 using System.Collections.Generic;
+using static DecisionRules.Model.GeoLocationsEnum;
+using static DecisionRules.Model.SolverStragiesEnum;
 
 namespace DemoApp
 {
@@ -15,7 +17,8 @@ namespace DemoApp
 
         static void Main(string[] args)
         {
-            RequestOption requestOptions = new RequestOption(apiKey, "eu1");
+
+            RequestOption requestOptions = new RequestOption(apiKey, GeoLocations.DEFAULT);
 
             DecisionRulesService drs = new DecisionRulesService(requestOptions);
 
@@ -26,9 +29,9 @@ namespace DemoApp
 
             string inputJSON = @"{""data"": {""day"":""today""}}";
 
-            List<ResultModel> response = drs.Solve<InputData, ResultModel>(ruleId, inputModel).Result;
+            List<ResultModel> response = drs.Solve<InputData, ResultModel>(ruleId, inputModel, SolverStrategies.STANDARD, "VERSION_HERE").Result;
 
-            List<ResultModel> responseString = drs.Solve<ResultModel>(ruleId, inputJSON, "1").Result;
+            List<ResultModel> responseString = drs.Solve<ResultModel>(ruleId, inputJSON, SolverStrategies.STANDARD, "VERSION_HERE").Result;
 
             Console.WriteLine(response[0].result);
             Console.WriteLine(responseString[0].result);
