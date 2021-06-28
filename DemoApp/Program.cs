@@ -18,7 +18,7 @@ namespace DemoApp
         static void Main(string[] args)
         {
 
-            RequestOption requestOptions = new RequestOption(apiKey, GeoLocations.DEFAULT);
+            RequestOption requestOptions = new RequestOption(apiKey, GeoLocations.US2);
 
             DecisionRulesService drs = new DecisionRulesService(requestOptions);
 

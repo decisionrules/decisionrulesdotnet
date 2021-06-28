@@ -8,6 +8,7 @@ using DecisionRules.Exceptions;
 using System.Net;
 using System.Collections.Generic;
 using static DecisionRules.Model.SolverStragiesEnum;
+using static DecisionRules.Model.GeoLocationsEnum;
 
 namespace DecisionRules
 {
@@ -26,126 +27,111 @@ namespace DecisionRules
         {
             string url = UrlGenerator(ruleId, version);
 
-            try
-            {
-                var response = await ApiCall<T>(url, inputData, solverStrategy);
+            var response = await ApiCall<T>(url, inputData, solverStrategy);
 
-                var result = response.Content.ReadAsStringAsync().Result;
+            var result = response.Content.ReadAsStringAsync().Result;
 
-                return JsonSerializer.Deserialize<List<U>>(result);
-            }
-            catch (NoUserException e)
-            {
-                throw e;
-            }
-            catch (TooManyApiCallsException e)
-            {
-                throw e;
-            }
-            catch (NotPublishedException e)
-            {
-                throw e;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            return JsonSerializer.Deserialize<List<U>>(result);
         }
 
         public async virtual Task<List<U>> Solve<U>(String ruleId, string inputData, SolverStrategies solverStrategy, String version = default)
         {
             string url = UrlGenerator(ruleId, version);
 
-            try
-            {
-                var response = await ApiCall<string>(url, inputData, solverStrategy);
+            var response = await ApiCall<string>(url, inputData, solverStrategy);
 
-                return JsonSerializer.Deserialize<List<U>>(response.Content.ReadAsStringAsync().Result);
-            }
-            catch (NoUserException e)
-            {
-                throw e;
-            }
-            catch (TooManyApiCallsException e)
-            {
-                throw e;
-            }
-            catch (NotPublishedException e)
-            {
-                throw e;
-            }
-            catch (ServerErrorException e)
-            {
-                throw e;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            return JsonSerializer.Deserialize<List<U>>(response.Content.ReadAsStringAsync().Result);
+            
         }
 
         private async Task<HttpResponseMessage> ApiCall<T>(string url, T inputData, SolverStrategies solverStrategy)
         {
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", globalOptions.ApiKey);
 
+
+
             if(solverStrategy != SolverStrategies.STANDARD)
             {
                 client.DefaultRequestHeaders.Add("X-Strategy", solverStrategy.ToString());
             }
 
-            HttpResponseMessage response;
-
-            if (typeof(T) != typeof(string))
+            try
             {
-                var requestData = new RequestModel<T>(inputData);
-                
-                _ = new JsonSerializerOptions { WriteIndented = false };
+                HttpResponseMessage response;
 
-                var request = JsonSerializer.Serialize(requestData);
+                if (typeof(T) != typeof(string))
+                {
+                    var requestData = new RequestModel<T>(inputData);
 
-                response = await client.PostAsync(url, new StringContent(request, Encoding.UTF8, "application/json"));
-            } else
+                    _ = new JsonSerializerOptions { WriteIndented = false };
+
+                    var request = JsonSerializer.Serialize(requestData);
+
+                    response = await client.PostAsync(url, new StringContent(request, Encoding.UTF8, "application/json"));
+                }
+                else
+                {
+                    response = client.PostAsync(url, new StringContent(inputData.ToString(), Encoding.UTF8, "application/json")).Result;
+                }
+
+                ValidateResponse(response);
+
+                return response;
+            }
+            catch (NoUserException e)
             {
-                response = client.PostAsync(url, new StringContent(inputData.ToString(), Encoding.UTF8, "application/json")).Result;
+                Console.WriteLine(e.Message);
+                throw;
+            }
+            catch (TooManyApiCallsException e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+            catch (NotPublishedException e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+            catch (ServerErrorException e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
             }
 
-            ValidateResponse(response);
-
-            return response;
         }
 
         private String UrlGenerator(String ruleId, String version)
         {
             String url;
 
-            try
-            {
-                if (this.globalOptions.Geoloc != default)
-                {
-                    url = $"http://{this.globalOptions.Geoloc}.api.decisionrules.io/rule/solve/";
-                }
-                else
-                {
-                    url = "http://api.decisionrules.io/rule/solve/";
-                }
-
-                if (version != default)
-                {
-                    url += $"{ruleId}/{version}";
-
-                }
-                else
-                {
-                    url += $"{ruleId}";
-                }
-
-                return url;
-            } 
-            catch (Exception e)
-            {
-                throw e;
-            }
             
+            if (this.globalOptions.Geoloc != GeoLocations.DEFAULT)
+            {
+                url = $"http://{this.globalOptions.Geoloc.ToString().ToLower()}.api.decisionrules.io/rule/solve/";
+            }
+            else
+            {
+                url = "http://api.decisionrules.io/rule/solve/";
+            }
+
+            if (version != default)
+            {
+                url += $"{ruleId}/{version}";
+
+            }
+            else
+            {
+                url += $"{ruleId}";
+            }
+
+            return url;
+
         }
 
         private void ValidateResponse (HttpResponseMessage response)
