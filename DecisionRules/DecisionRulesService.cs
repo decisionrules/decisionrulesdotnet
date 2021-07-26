@@ -48,8 +48,6 @@ namespace DecisionRules
         {
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", globalOptions.ApiKey);
 
-
-
             if(solverStrategy != SolverStrategies.STANDARD)
             {
                 client.DefaultRequestHeaders.Add("X-Strategy", solverStrategy.ToString());
@@ -110,14 +108,19 @@ namespace DecisionRules
         {
             String url;
 
-            
-            if (this.globalOptions.Geoloc != GeoLocations.DEFAULT)
+            if (this.globalOptions.Uri != default)
             {
-                url = $"http://{this.globalOptions.Geoloc.ToString().ToLower()}.api.decisionrules.io/rule/solve/";
-            }
-            else
+                url =  $"http://{this.globalOptions.Uri}/rule/solve/";
+            } else
             {
-                url = "http://api.decisionrules.io/rule/solve/";
+                if (this.globalOptions.Geoloc != GeoLocations.DEFAULT)
+                {
+                    url = $"http://{this.globalOptions.Geoloc.ToString().ToLower()}.api.decisionrules.io/rule/solve/";
+                }
+                else
+                {
+                    url = "http://api.decisionrules.io/rule/solve/";
+                }
             }
 
             if (version != default)

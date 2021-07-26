@@ -18,7 +18,7 @@ namespace DemoApp
         static void Main(string[] args)
         {
 
-            RequestOption requestOptions = new RequestOption(apiKey, GeoLocations.US2);
+            RequestOption requestOptions = new RequestOption(apiKey, GeoLocations.DEFAULT, "custom on primise url");
 
             DecisionRulesService drs = new DecisionRulesService(requestOptions);
 
