@@ -7,13 +7,16 @@ namespace DecisionRules
     {
         private readonly GeoLocations geoloc;
         private readonly String apiKey;
-        private readonly String uri;
+        private readonly CustomDomain customDomain;
+        private readonly String publicApikey;
 
-        public RequestOption(String apiKey, GeoLocations geoloc = GeoLocations.DEFAULT, String uri = default)
+        public RequestOption(String apiKey = default, String publicApiKey = default, GeoLocations geoloc = GeoLocations.DEFAULT, CustomDomain customDomain = default)
         {
             this.apiKey = apiKey;
+            this.publicApikey = publicApiKey;
             this.geoloc = geoloc;
-            this.uri = uri;
+            this.customDomain = customDomain;
+
         }
 
         public GeoLocations Geoloc
@@ -26,9 +29,14 @@ namespace DecisionRules
             get => apiKey;
         }
 
-        public String Uri
+        public CustomDomain CustomDomain
         {
-            get => uri;
+            get => customDomain;
+        }
+
+        public String PublicApiKey
+        {
+            get => publicApikey;
         }
     }
 }

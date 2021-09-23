@@ -7,6 +7,6 @@ namespace DecisionRules.Exceptions
     [Serializable]
     public class ServerErrorException : Exception
     {
-        public ServerErrorException():base("Server side problem") { }
+        public ServerErrorException():base("ERR: Server side problem") { }
     }
 }

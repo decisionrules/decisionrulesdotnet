@@ -7,6 +7,6 @@ namespace DecisionRules.Exceptions
     [Serializable]
     public class NoUserException : Exception
     {
-        public NoUserException():base("No user!") { }
+        public NoUserException():base("ERR: No user.") { }
     }
 }

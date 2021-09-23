@@ -5,8 +5,8 @@ using System.Text;
 namespace DecisionRules.Exceptions
 {
     [Serializable]
-    public class NotPublishedException : Exception
+    public class InvalidSolverTypeException : Exception
     {
-        public NotPublishedException():base("ERR: Rule is not published") { }
+        public InvalidSolverTypeException() : base("ERR: Invalid solver type") { }
     }
 }

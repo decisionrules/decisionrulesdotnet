@@ -7,6 +7,6 @@ namespace DecisionRules.Exceptions
     [Serializable]
     public class TooManyApiCallsException : Exception
     {
-        public TooManyApiCallsException():base("Too many API calls!") { }
+        public TooManyApiCallsException():base("ERR: Too many API calls") { }
     }
 }
