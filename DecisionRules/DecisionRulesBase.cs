@@ -34,7 +34,7 @@ namespace DecisionRules
             {
                 HttpResponseMessage response;
 
-                if (typeof(T) != typeof(string))
+                if (!(inputData is string))
                 {
                     var requestData = new RequestModel<T>(inputData);
 
@@ -46,7 +46,7 @@ namespace DecisionRules
                 }
                 else
                 {
-                    response = client.PostAsync(url, new StringContent(inputData.ToString(), Encoding.UTF8, "application/json")).Result;
+                    response = await client.PostAsync(url, new StringContent(inputData.ToString(), Encoding.UTF8, "application/json"));
                 }
 
                 ValidateResponse(response);
@@ -88,11 +88,24 @@ namespace DecisionRules
             try
             {
                 HttpResponseMessage response;
-                
-                var test = inputData.ToString();
 
-                response = await client.PostAsync(url, new StringContent(test, Encoding.UTF8, "application/json"));
-                
+                if (!(inputData is string))
+                {
+                    var requestData = new RequestModel<T>(inputData);
+
+                    _ = new JsonSerializerOptions { WriteIndented = false };
+
+                    var request = JsonSerializer.Serialize(requestData);
+
+                    response = await client.PostAsync(url, new StringContent(request, Encoding.UTF8, "application/json"));
+                }
+                else
+                {
+                    string data = inputData.ToString();
+
+                    response = await client.PostAsync(url, new StringContent(data, Encoding.UTF8, "application/json"));
+                }
+
                 ValidateResponse(response);
 
                 return response;
@@ -133,9 +146,22 @@ namespace DecisionRules
             {
                 HttpResponseMessage response;
 
-                
-                response = await client.PutAsync(url, new StringContent(inputData.ToString(), Encoding.UTF8, "application/json"));
-                
+
+                if (!(inputData is string))
+                {
+                    var requestData = new RequestModel<T>(inputData);
+
+                    _ = new JsonSerializerOptions { WriteIndented = false };
+
+                    var request = JsonSerializer.Serialize(requestData);
+
+                    response = await client.PutAsync(url, new StringContent(request, Encoding.UTF8, "application/json"));
+                }
+                else
+                {
+                    response = await client.PutAsync(url, new StringContent(inputData.ToString(), Encoding.UTF8, "application/json"));
+                }
+
 
                 ValidateResponse(response);
 
