@@ -13,8 +13,9 @@ Simple library that allows you to easily connect to [Decisionrules.io](https://d
 * JsonStringInput - input model in json string format instead of T type. (string)
 * Version - optional parameter that defines which version of rule you want use in solver API. If omited last version is used. (string)
 
-# NuGetRepository
+# NuGet Package
 * https://www.nuget.org/packages/DecisionRules/
+``` Install-Package DecisionRules ```
 
 
 ## Usage
