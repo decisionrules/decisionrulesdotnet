@@ -14,10 +14,10 @@ Simple library that allows you to easily connect to [Decisionrules.io](https://d
 * Version - optional parameter that defines which version of rule you want use in solver API. If omited last version is used. (string)
 
 # NuGet Package
-* https://www.nuget.org/packages/DecisionRules/
 ``` 
 Install-Package DecisionRules 
 ```
+* https://www.nuget.org/packages/DecisionRules/
 
 
 ## Usage
