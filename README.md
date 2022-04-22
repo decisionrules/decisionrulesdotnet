@@ -15,7 +15,9 @@ Simple library that allows you to easily connect to [Decisionrules.io](https://d
 
 # NuGet Package
 * https://www.nuget.org/packages/DecisionRules/
-``` Install-Package DecisionRules ```
+``` 
+Install-Package DecisionRules 
+```
 
 
 ## Usage
