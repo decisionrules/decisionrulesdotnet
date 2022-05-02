@@ -1,31 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Company></Company>
-    <Description>Simple library that allows you to easily connect to Decisionrules.io from your application.</Description>
-    <Version>2.0.1</Version>
-    <Copyright />
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://decisionrules.io/</PackageProjectUrl>
-    <PackageIcon>assets/decisionRulesIcon.png</PackageIcon>
-    <PackageIconUrl />
-    <NeutralLanguage>en</NeutralLanguage>
-    <AssemblyVersion>1.2.4.0</AssemblyVersion>
-    <FileVersion>1.2.3.0</FileVersion>
-    <PackageTags>decisionrules;rule engine; rules; solver; decision</PackageTags>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="assets\decisionRulesIcon.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
   </ItemGroup>
 
 </Project>
