@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System;
 using System.Net.Http;
-using System.Threading.Tasks;
-using System.Net.Http.Headers;
-using Newtonsoft.Json;
 using System.Text;
-using Newtonsoft.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace DecisionRules
 {
@@ -18,13 +15,7 @@ namespace DecisionRules
         {
             string url = _url.createSolverUrl(Enums.SolverMode.RULE);
 
-            if (version == 1 && version > 0)
-            {
-                url += $"/{ruleId}";
-            } else
-            {
-                url += $"/{ruleId}/{version}";
-            }
+            url += SetRuleIdAndVersion(ruleId, version);
 
             try
             {
@@ -32,7 +23,11 @@ namespace DecisionRules
 
                 string request = JsonConvert.SerializeObject(PrepareRequest<T>(data), _settings);
 
-                var response = await _client.PostAsync(url, new StringContent(request, Encoding.UTF8, "application/json"));
+                Console.WriteLine(request);
+
+                HttpResponseMessage response = await _client.PostAsync(url, new StringContent(request, Encoding.UTF8, "application/json"));
+
+                Console.WriteLine(response.Content.ReadAsStringAsync().Result);
 
                 return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
             } catch (Exception e)
@@ -44,6 +39,8 @@ namespace DecisionRules
         public async Task<U> SolveRuleFlow<T, U>(string ruleId, T data, int version = 1, Enums.RuleFlowStrategy strategy = Enums.RuleFlowStrategy.STANDARD)
         {
             string url = _url.createSolverUrl(Enums.SolverMode.RULEFLOW);
+
+            url += SetRuleIdAndVersion(ruleId, version);
 
             try
             {
@@ -58,6 +55,16 @@ namespace DecisionRules
             {
                 throw e;
             }
+        }
+
+        private string SetRuleIdAndVersion(string id, int version)
+        {
+            if (version == 1 && version > 0)
+            {
+                return $"/{id}";
+            }
+            
+            return $"/{id}/{version}";
         }
     }
 
