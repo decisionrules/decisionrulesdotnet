@@ -2,7 +2,24 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Simple library that allows you to easily connect to Decisionrules.io from your application.</Description>
+    <PackageIcon>dricon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/decisionrules/decisionrulesdotnet</RepositoryUrl>
+    <PackageTags>decision;decisionrules;rule;ruleengine;engine;api</PackageTags>
+    <AssemblyVersion>3.0.0</AssemblyVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\Users\VojtěchMikeš\Downloads\dricon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

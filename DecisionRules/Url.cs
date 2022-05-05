@@ -22,7 +22,7 @@ namespace DecisionRules
                 return $"https://api.decisionrules.io/{smode}/solve";
             } 
 
-            return $"{_customDomain.Protocol}/{this._customDomain.Domain}/{smode}/solve";
+            return $"{_customDomain.Protocol}://{this._customDomain.Domain}/{smode}/solve";
             
         }
 
@@ -35,7 +35,7 @@ namespace DecisionRules
 
             string stringProtocol = this._customDomain.Protocol;
 
-            return $"{stringProtocol}/{this._customDomain.Domain}/api";
+            return $"{stringProtocol}://{this._customDomain.Domain}/api";
         }
     }
 }

@@ -17,7 +17,7 @@ namespace DecisionRules
             _urlBase = base._url.createManagementUrl();
         }
         
-        public async Task<HttpContent> getRule(string ruleId, int version = 1)
+        public async Task<U> getRule<U>(string ruleId, int version = 1)
         {
             string taskUrl = _urlBase;
 
@@ -31,34 +31,34 @@ namespace DecisionRules
 
             HttpResponseMessage respose = await _client.GetAsync(taskUrl);
 
-            return respose.Content;
+            return JsonConvert.DeserializeObject<U>(await respose.Content.ReadAsStringAsync());
         }
 
-        public async Task<HttpContent> getSpace()
+        public async Task<U> getSpace<U>()
         {
             string taskUrl = $"{_urlBase}/space/items";
 
             HttpResponseMessage respose = await _client.GetAsync(taskUrl);
 
-            return respose.Content;
+            return JsonConvert.DeserializeObject<U>(await respose.Content.ReadAsStringAsync()); ;
         }
 
-        public async Task<HttpContent> createRule<T>(string spaceId, T body)
+        public async Task<U> createRule<T, U>(string spaceId, T body)
         {
             string taskUrl = $"{_urlBase}/rule/{spaceId}";
 
-            string request = JsonConvert.SerializeObject(body);
+            string request = JsonConvert.SerializeObject(PrepareRequest<T>(body), _settings);
 
             HttpResponseMessage response = await _client.PostAsync(taskUrl, new StringContent(request, Encoding.UTF8, "application/json"));
 
-            return response.Content;
+            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<HttpStatusCode> updateRule<T>(string ruleId, T body, int version = 1)
         {
             string taskUrl = $"{_urlBase}/rule/{ruleId}/{version}";
 
-            string request = JsonConvert.SerializeObject(body);
+            string request = JsonConvert.SerializeObject(PrepareRequest<T>(body), _settings);
 
             HttpResponseMessage response = await _client.PutAsync(taskUrl, new StringContent(request, Encoding.UTF8, "application/json"));
 
@@ -92,22 +92,22 @@ namespace DecisionRules
             return respose.Content;
         }
 
-        public async Task<HttpContent> createRuleFlow<T>(T body)
+        public async Task<U> createRuleFlow<T, U>(T body)
         {
             string taskUrl = $"{_urlBase}/rule-flow";
 
-            string request = JsonConvert.SerializeObject(body);
+            string request = JsonConvert.SerializeObject(PrepareRequest<T>(body), _settings);
 
             HttpResponseMessage response = await _client.PostAsync(taskUrl, new StringContent(request, Encoding.UTF8, "application/json"));
 
-            return response.Content;
+            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<HttpStatusCode> updateRuleFlow<T>(string ruleId, T body, int version = 1)
         {
             string taskUrl = $"{_urlBase}/rule-flow/{ruleId}/{version}";
 
-            string request = JsonConvert.SerializeObject(body);
+            string request = JsonConvert.SerializeObject(PrepareRequest<T>(body), _settings);
 
             HttpResponseMessage response = await _client.PutAsync(taskUrl, new StringContent(request, Encoding.UTF8, "application/json"));
 
@@ -123,7 +123,7 @@ namespace DecisionRules
             return response.StatusCode;
         }
 
-        public async Task<HttpContent> exportRuleFlow(string ruleId, int version=1)
+        public async Task<U> exportRuleFlow<U>(string ruleId, int version=1)
         {
             string taskUrl = _urlBase;
 
@@ -138,10 +138,10 @@ namespace DecisionRules
 
             HttpResponseMessage response = await _client.GetAsync(taskUrl);
 
-            return response.Content;
+            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<HttpContent> importRuleFlow<T>(T data, string ruleId = null, int version = 0)
+        public async Task<U> importRuleFlow<T, U>(T data, string ruleId = null, int version = 0)
         {
             string taskUrl = _urlBase;
             
@@ -160,32 +160,32 @@ namespace DecisionRules
                 taskUrl += $"/rule-flow/import/?overwrite={ruleId}&version={version}";
             }
 
-            string request = JsonConvert.SerializeObject(data);
+            string request = JsonConvert.SerializeObject(PrepareRequest<T>(data), _settings);
 
             HttpResponseMessage response = await _client.PostAsync(taskUrl, new StringContent(request, Encoding.UTF8, "application/json"));
 
-            return response.Content;
+            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<HttpContent> changeRuleStatus(string ruleId, string status, int version)
+        public async Task<U> changeRuleStatus<U>(string ruleId, string status, int version)
         {
             string taskUrl = $"{_urlBase}/rule/status/{ruleId}/{status}/{version}";
 
             HttpResponseMessage response = await _client.PutAsync(taskUrl, null);
-            
-            return response.Content;
+
+            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<HttpContent> changeRuleFlowStatus(string ruleId, string status, int version)
+        public async Task<U> changeRuleFlowStatus<U>(string ruleId, string status, int version)
         {
             string taskUrl = $"{_urlBase}/rule-flow/status/{ruleId}/{status}/{version}";
 
             HttpResponseMessage response = await _client.PutAsync(taskUrl, null);
 
-            return response.Content;
+            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<HttpContent> getTags(string[] tags)
+        public async Task<U> getTags<U>(string[] tags)
         {
             string joinedTags = string.Join(",", tags);
 
@@ -193,10 +193,10 @@ namespace DecisionRules
 
             HttpResponseMessage response = await _client.GetAsync(taskUrl);
 
-            return response.Content;
+            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<HttpContent> updateTags<T>(T data, string ruleId, int version = 0)
+        public async Task<U> updateTags<T, U>(T data, string ruleId, int version = 0)
         {
             string taskUrl = _urlBase;
 
@@ -210,11 +210,11 @@ namespace DecisionRules
 
             HttpRequestMessage request = new HttpRequestMessage(new HttpMethod("PATCH"), taskUrl);
 
-            request.Content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            request.Content = new StringContent(JsonConvert.SerializeObject(PrepareRequest<T>(data), _settings), Encoding.UTF8, "application/json");
 
             HttpResponseMessage response = await _client.SendAsync(request);
 
-            return response.Content;
+            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<HttpStatusCode> deleteTags(string ruleId, int version = 0)
