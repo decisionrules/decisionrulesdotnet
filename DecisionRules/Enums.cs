@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DecisionRules
+﻿namespace DecisionRules
 {
     public class Enums
     {
@@ -23,7 +19,7 @@ namespace DecisionRules
         public enum SolverMode
         {
             RULE,
-            RULEFLOW
+            COMPOSITION
         }
 
         public enum RuleFlowStrategy

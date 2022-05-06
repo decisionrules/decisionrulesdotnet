@@ -1,60 +1,61 @@
-﻿using Newtonsoft.Json;
+﻿using Newtonsoft.Json.Serialization;
 using System;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DecisionRules
 {
     public class Solver: ApiBase
     {
+        public Solver(string apiKey) : this(apiKey, new CustomDomain("api.decisionrules.io", Enums.Protocol.HTTPS, 80), new CamelCaseNamingStrategy()) { }
+        public Solver(string apiKey, CustomDomain customDomain) : this(apiKey, customDomain, new CamelCaseNamingStrategy()) { }
+        public Solver(string apiKey, CustomDomain customDomain, NamingStrategy namingStrategy) : base(apiKey, customDomain, namingStrategy){}
 
-        public Solver(string apiKey, CustomDomain customDomain = null) : base(apiKey, customDomain){}
-
-        public async Task<U> SolveRule<T, U>(string ruleId, T data, int version = 1, Enums.RuleStrategy strategy = Enums.RuleStrategy.STANDARD)
+        public async Task<U> SolveRule<T, U>(string itemId, T data)
         {
-            string url = _url.createSolverUrl(Enums.SolverMode.RULE);
-
-            url += SetRuleIdAndVersion(ruleId, version);
-
-            try
-            {
-                SetStrategyHeader(strategy);
-
-                string request = JsonConvert.SerializeObject(PrepareRequest<T>(data), _settings);
-
-                Console.WriteLine(request);
-
-                HttpResponseMessage response = await _client.PostAsync(url, new StringContent(request, Encoding.UTF8, "application/json"));
-
-                Console.WriteLine(response.Content.ReadAsStringAsync().Result);
-
-                return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
-            } catch (Exception e)
-            {
-                throw e;
-            }
+            return await SolveRule<T, U>(itemId, data, 1, Enums.RuleStrategy.STANDARD);
         }
 
-        public async Task<U> SolveRuleFlow<T, U>(string ruleId, T data, int version = 1, Enums.RuleFlowStrategy strategy = Enums.RuleFlowStrategy.STANDARD)
+        public async Task<U> SolveRule<T, U>(string itemId, T data, int version)
         {
-            string url = _url.createSolverUrl(Enums.SolverMode.RULEFLOW);
+            return await SolveRule<T, U>(itemId, data, version, Enums.RuleStrategy.STANDARD);
+        }
 
-            url += SetRuleIdAndVersion(ruleId, version);
+        public async Task<U> SolveRule<T, U>(string itemId, T data, Enums.RuleStrategy strategy)
+        {
+            return await SolveRule<T, U>(itemId, data, 1, strategy);
+        }
 
-            try
-            {
-                SetStrategyHeader(strategy);
+        public async Task<U> SolveRule<T, U>(string itemId, T data, int version, Enums.RuleStrategy strategy)
+        {
+            string url = _url.CreateSolverUrl(Enums.SolverMode.RULE);
 
-                string request = JsonConvert.SerializeObject(PrepareRequest<T>(data), _settings);
+            url += SetRuleIdAndVersion(itemId, version);
 
-                HttpResponseMessage response = await _client.PostAsync(url, new StringContent(request, Encoding.UTF8, "application/json"));
+            return await CallSolver<T, U>(url, data, strategy);
+        }
 
-                return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
-            } catch(Exception e)
-            {
-                throw e;
-            }
+        public async Task<U> SolveRuleFlow<T, U>(string itemId, T data)
+        {
+            return await SolveRuleFlow<T, U>(itemId, data, 1, Enums.RuleFlowStrategy.STANDARD);
+        }
+
+        public async Task<U> SolveRuleFlow<T, U>(string itemId, T data, int version)
+        {
+            return await SolveRuleFlow<T, U>(itemId, data, version, Enums.RuleFlowStrategy.STANDARD);
+        }
+
+        public async Task<U> SolveRuleFlow<T, U>(string itemId, T data, Enums.RuleFlowStrategy strategy)
+        {
+            return await SolveRuleFlow<T, U>(itemId, data, 1, strategy);
+        }
+
+        public async Task<U> SolveRuleFlow<T, U>(string itemId, T data, int version, Enums.RuleFlowStrategy strategy)
+        {
+            string url = _url.CreateSolverUrl(Enums.SolverMode.COMPOSITION);
+
+            url += SetRuleIdAndVersion(itemId, version);
+
+            return await CallSolver<T, U>(url, data, strategy);
         }
 
         private string SetRuleIdAndVersion(string id, int version)

@@ -1,35 +1,26 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DecisionRules
 {
     public class ApiBase
     {
         protected readonly string _apiKey;
-        protected readonly CustomDomain _customDomain;
         protected HttpClient _client;
-        protected Url _url;
-        protected DefaultContractResolver _contractResolver;
+        protected CustomDomain _url;
         protected JsonSerializerSettings _settings;
 
-
-        public ApiBase(string apiKey, CustomDomain customDomain)
+        public ApiBase(string apikey, CustomDomain customDomain, NamingStrategy namingStrategy)
         {
-            _apiKey = apiKey;
-            _customDomain = customDomain;
+            _apiKey = apikey;
             _client = new HttpClient();
-            _url = new Url(_customDomain);
-            _contractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-            _settings = new JsonSerializerSettings
-            {
-                ContractResolver = _contractResolver,
-                Formatting = Formatting.Indented,
-            };
+            _url = customDomain;
+            _settings = CreateNamingStrategy(namingStrategy);
             SetBaseHeader();
         }
 
@@ -37,22 +28,7 @@ namespace DecisionRules
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this._apiKey);
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        }
-
-        protected void SetStrategyHeader(Enums.RuleStrategy strategy)
-        {
-            if (strategy != Enums.RuleStrategy.STANDARD)
-            {
-                _client.DefaultRequestHeaders.Add("X-Strategy", strategy.ToString());
-            }
-        }
-
-        protected void SetStrategyHeader(Enums.RuleFlowStrategy strategy)
-        {
-            if (strategy != Enums.RuleFlowStrategy.STANDARD)
-            {
-                _client.DefaultRequestHeaders.Add("X-Strategy", strategy.ToString());
-            }
+            //_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("DR-DOTNET-SDK"));
         }
 
         protected ApiDataWrapper<T> PrepareRequest<T>(T userData)
@@ -63,6 +39,67 @@ namespace DecisionRules
             };
 
             return request;
+        }
+
+        protected async Task<U> CallSolver<T, U>(string url, T data, Enums.RuleFlowStrategy strategy)
+        {
+            try
+            {
+                string requestData = JsonConvert.SerializeObject(PrepareRequest<T>(data), _settings);
+
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+
+                if (strategy != Enums.RuleFlowStrategy.STANDARD)
+                {
+                    request.Headers.Add("X-Strategy", strategy.ToString());
+                }
+
+                request.Content = new StringContent(requestData, Encoding.UTF8, "application/json");
+
+
+                HttpResponseMessage response = await _client.SendAsync(request);
+
+                return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        protected async Task<U> CallSolver<T,U>(string url, T data, Enums.RuleStrategy strategy)
+        {
+            try
+            {
+                string requestData = JsonConvert.SerializeObject(PrepareRequest<T>(data), _settings);
+
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+                
+                if (strategy != Enums.RuleStrategy.STANDARD)
+                {
+                    request.Headers.Add("X-Strategy", strategy.ToString());
+                }
+
+                request.Content = new StringContent(requestData, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await _client.SendAsync(request);
+
+                return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        private JsonSerializerSettings CreateNamingStrategy(NamingStrategy namingStrategy)
+        {
+            DefaultContractResolver contractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+            return new JsonSerializerSettings
+            {
+                ContractResolver = contractResolver,
+                Formatting = Formatting.Indented,
+            };
         }
 
     }

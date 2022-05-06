@@ -1,28 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DecisionRules
+﻿namespace DecisionRules
 {
     public class CustomDomain
     {
-        private readonly string _domain;
-        private readonly Enums.Protocol _protocol;
+        private  string _domain;
+        private  Enums.Protocol _protocol;
+        private  int _port;
 
-        public CustomDomain(string domain, Enums.Protocol protocol)
+        public CustomDomain(string domain, Enums.Protocol protocol) : this(domain, protocol, 0) { }
+
+        public CustomDomain(string domain, Enums.Protocol protocol, int port)
         {
             _domain = domain;
             _protocol = protocol;
+            if (port == 0)
+            {
+                switch (protocol)
+                {
+                    case Enums.Protocol.HTTP: _port = 80; break;
+                    case Enums.Protocol.HTTPS: _port = 443; break;
+                }
+            } else
+            {
+                _port = port;
+            }
+            
         }
 
-        public string Domain
+        public string CreateSolverUrl(Enums.SolverMode solverMode)
         {
-            get { return _domain; }
+            return $"{_protocol.ToString().ToLower()}://{_domain}:{_port}/{solverMode}/solve";
         }
 
-        public string Protocol
+        public string CreateManagementUrl()
         {
-            get { return _protocol.Equals(Enums.Protocol.HTTP) ? "http" : "https"; }
+            return $"{_protocol.ToString().ToLower()}://{_domain}:{_port}/api";
         }
     }
 }
