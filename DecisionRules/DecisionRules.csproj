@@ -8,6 +8,8 @@
     <RepositoryUrl>https://github.com/decisionrules/decisionrulesdotnet</RepositoryUrl>
     <PackageTags>decision;decisionrules;rule;ruleengine;engine;api</PackageTags>
     <AssemblyVersion>3.0.0</AssemblyVersion>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

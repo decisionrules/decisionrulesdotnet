@@ -13,6 +13,7 @@ Custom domain is special class that is designed for those who uses DecisionRules
 |domain|string|
 |protocol|Enums.Protocol|
 |port|int|
+
 Domain argument is name of desired domain, protocol is HTTP or HTTPS and port is TCP/IP port.
 If port is not defined in the class constructor it is set to default value by protocol value, 80 for HTTP and 443 for HTTPS.
 ```csharp
