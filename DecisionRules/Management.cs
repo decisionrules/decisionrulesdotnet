@@ -62,6 +62,17 @@ namespace DecisionRules
             return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
         }
 
+        public async Task<U> CreateRule<T, U>(T body)
+        {
+            string taskUrl = $"{_urlBase}/rule/";
+
+            string request = JsonConvert.SerializeObject(body, _settings);
+
+            HttpResponseMessage response = await _client.PostAsync(taskUrl, new StringContent(request, Encoding.UTF8, "application/json"));
+
+            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
+        }
+
         public async Task<U> CreateRule<T, U>(string spaceId, T body)
         {
             string taskUrl = $"{_urlBase}/rule/{spaceId}";

@@ -6,23 +6,11 @@
         private  Enums.Protocol _protocol;
         private  int _port;
 
-        public CustomDomain(string domain, Enums.Protocol protocol) : this(domain, protocol, 0) { }
-
         public CustomDomain(string domain, Enums.Protocol protocol, int port)
         {
             _domain = domain;
             _protocol = protocol;
-            if (port == 0)
-            {
-                switch (protocol)
-                {
-                    case Enums.Protocol.HTTP: _port = 80; break;
-                    case Enums.Protocol.HTTPS: _port = 443; break;
-                }
-            } else
-            {
-                _port = port;
-            }
+            _port = port;
             
         }
 
