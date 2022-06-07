@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -28,7 +29,6 @@ namespace DecisionRules
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this._apiKey);
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            //_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("DR-DOTNET-SDK"));
         }
 
         protected ApiDataWrapper<T> PrepareRequest<T>(T userData)
@@ -41,7 +41,7 @@ namespace DecisionRules
             return request;
         }
 
-        protected async Task<U> CallSolver<T, U>(string url, T data, Enums.RuleFlowStrategy strategy)
+        protected async Task<List<U>> CallSolver<T, U>(string url, T data, Enums.RuleFlowStrategy strategy)
         {
             try
             {
@@ -56,10 +56,9 @@ namespace DecisionRules
 
                 request.Content = new StringContent(requestData, Encoding.UTF8, "application/json");
 
-
                 HttpResponseMessage response = await _client.SendAsync(request);
 
-                return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<List<U>>(await response.Content.ReadAsStringAsync());
             }
             catch (Exception e)
             {
@@ -67,7 +66,7 @@ namespace DecisionRules
             }
         }
 
-        protected async Task<U> CallSolver<T,U>(string url, T data, Enums.RuleStrategy strategy)
+        protected async Task<List<U>> CallSolver<T,U>(string url, T data, Enums.RuleStrategy strategy)
         {
             try
             {
@@ -84,7 +83,7 @@ namespace DecisionRules
 
                 HttpResponseMessage response = await _client.SendAsync(request);
 
-                return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<List<U>>(await response.Content.ReadAsStringAsync());
             }
             catch (Exception e)
             {

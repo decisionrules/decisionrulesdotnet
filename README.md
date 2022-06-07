@@ -7,35 +7,43 @@ SDK v3 is supported for [.NET 6.0](https://dotnet.microsoft.com/en-us/download/d
 You can simply integrate [SDK](https://www.nuget.org/packages/DecisionRules/) to your project via NuGet package manager.
 > Please note that SDK uses [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json/) library for serialization and deserialization of request / response data.
 # Defining Custom domain
-Custom domain is special class that is designed for those who uses DecisionRules in private cloud or as on-premise. Class takes up to 3 arguments (where domain name and protocol is mandatory):
-|Argument|Data type|
-|--|--|
-|domain|string|
-|protocol|Enums.Protocol|
-|port|int|
+Custom domain is special class that is designed for those who uses DecisionRules in private cloud or as on-premise.
 
 Domain argument is name of desired domain, protocol is HTTP or HTTPS and port is TCP/IP port.
 If port is not defined in the class constructor it is set to default value by protocol value, 80 for HTTP and 443 for HTTPS.
 ```csharp
-var customDomain = new CustomDomain("api.mydomain.com", Enums.Protocol);
-var customDomain2 = new CustomDomain("api.mydomain.com", Enums.Protocol, 8080); 
+CustomDomain customDomain = new CustomDomain("api.mydomain.com", HTTPS, 443);
 ```
 # Using Solver API
 Solver class takes up to 3 arguments that are `api key`(can be generated on dashboard), `custom domain` object and Newtonsoft `naming strategy` for JSON serialization. Last two arguments are not mandatory and are set to default values on init. 
 Class exposes two async methods: SolveRule and SolveRuleFlow.
 ```csharp
-public async Task<List<OutputModel>> amazingRuleSolver() 
+public async Task<List<SampleResponse>> amazingRuleSolver() 
 {
-	var solver = new Solver("myApiKey");
+	Solver solver = new Solver("myApiKey");
 	
-	var itemId = "id of a rule that is being solved";
-	var itemId2 = "id of a ruleflow that is being solved";
-	InputModel data = new();
+	string itemId = "id of a rule that is being solved";
+	string itemId2 = "id of a ruleflow that is being solved";
 	
-	var resultForRule = await solver.SolveRule<InputModel,OutputModel>(itemId, data);
-	var resultForRuleFlow = await solver.SolverRuleFlow<InputModel,OutputModel>(itemId2, data);
+	SampleRequest request = new();
+	request.InputAttribute = "MY RULE INPUT";
+
+	SampleResponse response = new();
+	
+	SampleResponse resultForRule = await solver.SolveRule<SampleRequest,SampleResponse>(itemId, data);
+	SampleResponse resultForRuleFlow = await solver.SolverRuleFlow<SampleRequest,SampleResponse>(itemId2, data);
 	
 	return resultForRule;
+}
+
+class SampleRequest
+{
+	public string InputAtrribute { get; set;}
+}
+
+class SampleResponse
+{
+	pubic string OutputAttribute { get; set;}
 }
 ```
 # Using Management API
@@ -63,9 +71,9 @@ Management class takes on argument, management api key. Class exposes number of 
 ```csharp
 public async Task<Object> manageRules()
 {
-	var manager = new Management("management_key");
+	Management manager = new Management("management_key");
 	
-	var itemId = "some rule or ruleflow id"
+	string itemId = "some rule or ruleflow id"
 
 	return await manager.GetRule(itemId);
 } 
