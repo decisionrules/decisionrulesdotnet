@@ -12,7 +12,7 @@ namespace DecisionRules
     {
         private readonly string _urlBase;
 
-        public Management(string apiKey) : this(apiKey, new CustomDomain("api.decisionrules.io", Enums.Protocol.HTTPS, 80), new CamelCaseNamingStrategy()) { }
+        public Management(string apiKey) : this(apiKey, new CustomDomain("api.decisionrules.io", Enums.Protocol.HTTPS, 443), new CamelCaseNamingStrategy()) { }
         public Management(string apiKey, CustomDomain customDomain) : this(apiKey, customDomain, new CamelCaseNamingStrategy()) { }
         public Management(string apiKey, CustomDomain customDomain, NamingStrategy namingStrategy) : base(apiKey, customDomain, namingStrategy) 
         {

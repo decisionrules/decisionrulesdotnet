@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -9,7 +9,7 @@
     <PackageTags>decision;decisionrules;rule;ruleengine;engine;api</PackageTags>
     <AssemblyVersion>3.0.0</AssemblyVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>3.0.2</Version>
+    <Version>3.0.3</Version>
     <Copyright>MIT</Copyright>
     <PackageProjectUrl>https://github.com/decisionrules/decisionrulesdotnet</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
