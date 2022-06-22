@@ -13,6 +13,6 @@ project.lock.json
 .DS_Store
 .idea/
 
-DecisionRulesTest/
+DecisionRulesUnitTests/
 TestResults
 DemoApp
