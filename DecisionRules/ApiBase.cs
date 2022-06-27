@@ -43,6 +43,16 @@ namespace DecisionRules
 
         protected async Task<List<U>> CallSolver<T, U>(string url, T data, Enums.RuleFlowStrategy strategy)
         {
+            return await CallSolver<T, U>(url, data, strategy, null);
+        }
+
+        protected async Task<List<U>> CallSolver<T,U>(string url, T data, Enums.RuleStrategy strategy)
+        {
+            return await CallSolver<T, U>(url, data, strategy, null);
+        }
+
+        protected async Task<List<U>> CallSolver<T, U>(string url, T data, Enums.RuleFlowStrategy strategy, string correlationId)
+        {
             try
             {
                 string requestData = JsonConvert.SerializeObject(PrepareRequest<T>(data), _settings);
@@ -52,6 +62,11 @@ namespace DecisionRules
                 if (strategy != Enums.RuleFlowStrategy.STANDARD)
                 {
                     request.Headers.Add("X-Strategy", strategy.ToString());
+                }
+
+                if (correlationId != null)
+                {
+                    request.Headers.Add("X-Correlation-Id", correlationId);
                 }
 
                 request.Content = new StringContent(requestData, Encoding.UTF8, "application/json");
@@ -66,7 +81,7 @@ namespace DecisionRules
             }
         }
 
-        protected async Task<List<U>> CallSolver<T,U>(string url, T data, Enums.RuleStrategy strategy)
+        protected async Task<List<U>> CallSolver<T,U>(string url, T data, Enums.RuleStrategy strategy, string correlationId)
         {
             try
             {
@@ -77,6 +92,11 @@ namespace DecisionRules
                 if (strategy != Enums.RuleStrategy.STANDARD)
                 {
                     request.Headers.Add("X-Strategy", strategy.ToString());
+                }
+
+                if (correlationId != null)
+                {
+                    request.Headers.Add("X-Correlation-Id", correlationId);
                 }
 
                 request.Content = new StringContent(requestData, Encoding.UTF8, "application/json");
