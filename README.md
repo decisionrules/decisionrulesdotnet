@@ -43,7 +43,7 @@ class SampleRequest
 
 class SampleResponse
 {
-	pubic string OutputAttribute { get; set;}
+	public string OutputAttribute { get; set;}
 }
 ```
 # Using Management API
