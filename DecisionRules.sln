@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecisionRules", "DecisionRules\DecisionRules.csproj", "{40F076FF-5792-498E-BA14-5C0CCB737E4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DecisionRulesUnitTests", "DecisionRulesUnitTests\DecisionRulesUnitTests.csproj", "{5C12FA9E-301B-49AA-A7D2-DE10B488297B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecisionRulesUnitTests", "DecisionRulesUnitTests\DecisionRulesUnitTests.csproj", "{5C12FA9E-301B-49AA-A7D2-DE10B488297B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

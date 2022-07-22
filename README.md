@@ -30,8 +30,8 @@ public async Task<List<SampleResponse>> amazingRuleSolver()
 
 	SampleResponse response = new();
 	
-	SampleResponse resultForRule = await solver.SolveRule<SampleRequest,SampleResponse>(itemId, data);
-	SampleResponse resultForRuleFlow = await solver.SolverRuleFlow<SampleRequest,SampleResponse>(itemId2, data);
+	List<SampleResponse> resultForRule = await solver.SolveRule<SampleRequest,SampleResponse>(itemId, data);
+	List<SampleResponse> resultForRuleFlow = await solver.SolverRuleFlow<SampleRequest,SampleResponse>(itemId2, data);
 	
 	return resultForRule;
 }
@@ -46,6 +46,9 @@ class SampleResponse
 	public string OutputAttribute { get; set;}
 }
 ```
+
+> When creating an input object for the solver, it changes to camelCase format when deserializing the T object. It is a recommended practice to use camelCase also on the DecisionRules dashboard.
+
 # Using Management API
 Management class takes on argument, management api key. Class exposes number of methods listed below.
 

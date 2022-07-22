@@ -13,7 +13,6 @@ namespace DecisionRules.Utils
         {
             try
             {
-                
                 return JsonConvert.DeserializeObject<List<T>>(await response.Content.ReadAsStringAsync());
             } catch
             {
