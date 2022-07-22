@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Serialization;
+﻿using DecisionRules.Utils;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -7,9 +8,13 @@ namespace DecisionRules
 {
     public class Solver: ApiBase
     {
-        public Solver(string apiKey) : this(apiKey, new CustomDomain("api.decisionrules.io", Enums.Protocol.HTTPS, 443), new CamelCaseNamingStrategy()) { }
+        private readonly SolverUtils _solverUtils;
+
+        public Solver(string apiKey) : this(apiKey, new CustomDomain("api.decisionrules.io", Enums.Protocol.HTTPS, 443), new CamelCaseNamingStrategy()) {}
         public Solver(string apiKey, CustomDomain customDomain) : this(apiKey, customDomain, new CamelCaseNamingStrategy()) { }
-        public Solver(string apiKey, CustomDomain customDomain, NamingStrategy namingStrategy) : base(apiKey, customDomain, namingStrategy){}
+        public Solver(string apiKey, CustomDomain customDomain, NamingStrategy namingStrategy) : base(apiKey, customDomain, namingStrategy){
+            _solverUtils = new SolverUtils();
+        }
 
         public async Task<List<U>> SolveRule<T, U>(string itemId, T data)
         {
@@ -50,9 +55,7 @@ namespace DecisionRules
         {
             string url = _url.CreateSolverUrl(Enums.SolverMode.RULE);
 
-            url += SetRuleIdAndVersion(itemId, version);
-
-            Console.WriteLine(url);
+            url += _solverUtils.SetRuleIdAndVersion(itemId, version);
 
             return await CallSolver<T, U>(url, data, strategy, correlationId);
         }
@@ -96,22 +99,12 @@ namespace DecisionRules
         {
             string url = _url.CreateSolverUrl(Enums.SolverMode.COMPOSITION);
 
-            url += SetRuleIdAndVersion(itemId, version);
-
-            Console.WriteLine(url);
+            url += _solverUtils.SetRuleIdAndVersion(itemId, version);
 
             return await CallSolver<T, U>(url, data, strategy, correlationId);
         }
 
-        private string SetRuleIdAndVersion(string id, int version)
-        { 
-            if (version > 0)
-            {
-                return $"/{id}/{version}";
-            }
-
-            return $"/{id}/";
-        }
+        
     }
 
     

@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using DecisionRules.Utils;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,6 +14,7 @@ namespace DecisionRules
         protected readonly string _apiKey;
         protected HttpClient _client;
         protected CustomDomain _url;
+        private ApiDataUtils _apiDataUtils;
         protected JsonSerializerSettings _settings;
 
         public ApiBase(string apikey, CustomDomain customDomain, NamingStrategy namingStrategy)
@@ -21,24 +22,10 @@ namespace DecisionRules
             _apiKey = apikey;
             _client = new HttpClient();
             _url = customDomain;
-            _settings = CreateNamingStrategy(namingStrategy);
-            SetBaseHeader();
-        }
-
-        private void SetBaseHeader()
-        {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this._apiKey);
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        }
-
-        protected ApiDataWrapper<T> PrepareRequest<T>(T userData)
-        {
-            ApiDataWrapper<T> request = new ApiDataWrapper<T>
-            {
-                Data = userData
-            };
-
-            return request;
+            _settings = NamingStrategyHandler.CreateNamingStrategy(namingStrategy);
+            HttpClientUtils clientUtils = new HttpClientUtils(_client);
+            _apiDataUtils = new ApiDataUtils();
+            clientUtils.SetBaseHeader(_apiKey);
         }
 
         protected async Task<List<U>> CallSolver<T, U>(string url, T data, Enums.RuleFlowStrategy strategy)
@@ -55,7 +42,7 @@ namespace DecisionRules
         {
             try
             {
-                string requestData = JsonConvert.SerializeObject(PrepareRequest<T>(data), _settings);
+                string requestData = JsonConvert.SerializeObject(_apiDataUtils.PrepareRequest<T>(data), _settings);
 
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
 
@@ -73,7 +60,7 @@ namespace DecisionRules
 
                 HttpResponseMessage response = await _client.SendAsync(request);
 
-                return JsonConvert.DeserializeObject<List<U>>(await response.Content.ReadAsStringAsync());
+                return await ResponseDeserializer.DeserializeSolverResponse<U>(response);
             }
             catch (Exception e)
             {
@@ -85,7 +72,7 @@ namespace DecisionRules
         {
             try
             {
-                string requestData = JsonConvert.SerializeObject(PrepareRequest<T>(data), _settings);
+                string requestData = JsonConvert.SerializeObject(_apiDataUtils.PrepareRequest<T>(data), _settings);
 
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
                 
@@ -103,7 +90,7 @@ namespace DecisionRules
 
                 HttpResponseMessage response = await _client.SendAsync(request);
 
-                return JsonConvert.DeserializeObject<List<U>>(await response.Content.ReadAsStringAsync());
+                return await ResponseDeserializer.DeserializeSolverResponse<U>(response);
             }
             catch (Exception e)
             {
@@ -111,20 +98,5 @@ namespace DecisionRules
             }
         }
 
-        private JsonSerializerSettings CreateNamingStrategy(NamingStrategy namingStrategy)
-        {
-            DefaultContractResolver contractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-            return new JsonSerializerSettings
-            {
-                ContractResolver = contractResolver,
-                Formatting = Formatting.Indented,
-            };
-        }
-
-    }
-
-    public class ApiDataWrapper<T>
-    {
-        public T Data { get; set; }
     }
 }

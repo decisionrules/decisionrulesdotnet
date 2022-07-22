@@ -9,7 +9,7 @@
     <PackageTags>decision;decisionrules;rule;ruleengine;engine;api</PackageTags>
     <AssemblyVersion>3.0.0</AssemblyVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>3.0.3</Version>
+    <Version>3.0.4</Version>
     <Copyright>MIT</Copyright>
     <PackageProjectUrl>https://github.com/decisionrules/decisionrulesdotnet</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
