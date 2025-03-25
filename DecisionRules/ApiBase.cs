@@ -87,6 +87,7 @@ namespace DecisionRules
                 }
 
                 request.Content = new StringContent(requestData, Encoding.UTF8, "application/json");
+                Console.WriteLine("Request {0}", request.Content.ReadAsStringAsync().Result);
 
                 HttpResponseMessage response = await _client.SendAsync(request);
 

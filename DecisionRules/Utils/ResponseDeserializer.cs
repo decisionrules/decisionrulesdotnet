@@ -9,6 +9,13 @@ namespace DecisionRules.Utils
 {
     internal class ResponseDeserializer
     {
+        /// <summary>
+        /// Deserializes HTTP Response from DecisionRules API server
+        /// </summary>
+        /// <param name="response"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="FailedToSolveRuleException"></exception>
         public async static Task<List<T>> DeserializeSolverResponse<T>(HttpResponseMessage response)
         {
             try

@@ -5,8 +5,6 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecisionRules", "DecisionRules\DecisionRules.csproj", "{40F076FF-5792-498E-BA14-5C0CCB737E4B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecisionRulesUnitTests", "DecisionRulesUnitTests\DecisionRulesUnitTests.csproj", "{5C12FA9E-301B-49AA-A7D2-DE10B488297B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{40F076FF-5792-498E-BA14-5C0CCB737E4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40F076FF-5792-498E-BA14-5C0CCB737E4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40F076FF-5792-498E-BA14-5C0CCB737E4B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5C12FA9E-301B-49AA-A7D2-DE10B488297B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5C12FA9E-301B-49AA-A7D2-DE10B488297B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5C12FA9E-301B-49AA-A7D2-DE10B488297B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5C12FA9E-301B-49AA-A7D2-DE10B488297B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
