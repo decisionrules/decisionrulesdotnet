@@ -42,13 +42,13 @@ var dr = new DecisionRulesService(options);
 
 **v3:**
 ```csharp
-CustomDomain customDomain = new CustomDomain("api.mydomain.com", HTTPS, 443);
+CustomDomain customDomain = new CustomDomain("app.decisionrules.io", HTTPS, 443);
 Solver solver = new Solver("myApiKey", customDomain);
 ```
 
 **v4:**
 ```csharp
-var options = new DecisionRulesOptions("https://api.mydomain.com:443", "SOLVER_KEY", "MANAGEMENT_KEY");
+var options = new DecisionRulesOptions("https://app.decisionrules.io", "SOLVER_KEY", "MANAGEMENT_KEY");
 var dr = new DecisionRulesService(options);
 ```
 
