@@ -158,145 +158,139 @@ namespace DecisionRules.Test
 
             var dr = new DecisionRulesService(
                         options: new DecisionRulesOptions(host, solverKey, managementKey));
-            string jsonString = "{\r\n  \"input\": \"Hi Solver\"\r\n}";
 
-            // Deserialize into a dictionary
-            var map = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonString);
+            await dr.Management.CreateFolderAsync("root", new FolderData.Builder().SetType(FolderType.FOLDER)
+                .SetName("Folder Name").SetChildren(new List<FolderData>()).Build());
 
-            Console.WriteLine(await dr.SolveAsync("d2128ed6-fa11-793b-39e4-7ec2e92ee625", "{\r\n  \"input\": \"Hi Solver\"\r\n}"));
-            Console.WriteLine(await dr.SolveAsync("d2128ed6-fa11-793b-39e4-7ec2e92ee625", map));
-            //await dr.Management.CreateFolderAsync("root", new FolderData.Builder().SetType(FolderType.FOLDER)
-            //    .SetName("Folder Name").SetChildren(new List<FolderData>()).Build());
+            var folderDataRoot = await dr.Management.GetFolderStructureAsync("root");
+            Console.WriteLine("--- GetFolderStructureAsync(root) ---");
+            Console.WriteLine(JsonSerializer.Serialize(folderDataRoot));
 
-            //var folderDataRoot = await dr.Management.GetFolderStructureAsync("root");
-            //Console.WriteLine("--- GetFolderStructureAsync(root) ---");
-            //Console.WriteLine(JsonSerializer.Serialize(folderDataRoot));
+            var folder = folderDataRoot.Children.FirstOrDefault(f => f.Name == "Folder Name");
+            Assert.IsNotNull(folder, "Folder was not created");
 
-            //var folder = folderDataRoot.Children.FirstOrDefault(f => f.Name == "Folder Name");
-            //Assert.IsNotNull(folder, "Folder was not created");
+            await dr.Management.DeleteFolderAsync(folder.Id, true);
 
-            //await dr.Management.DeleteFolderAsync(folder.Id, true);
+            await dr.Management.CreateFolderByPathAsync("/", new FolderData.Builder().SetType(FolderType.FOLDER)
+                .SetName("Folder Name").SetChildren(new List<FolderData>()).Build());
 
-            //await dr.Management.CreateFolderByPathAsync("/", new FolderData.Builder().SetType(FolderType.FOLDER)
-            //    .SetName("Folder Name").SetChildren(new List<FolderData>()).Build());
+            folderDataRoot = await dr.Management.GetFolderStructureAsync("root");
+            Console.WriteLine("--- GetFolderStructureAsync(root 2) ---");
+            Console.WriteLine(JsonSerializer.Serialize(folderDataRoot));
 
-            //folderDataRoot = await dr.Management.GetFolderStructureAsync("root");
-            //Console.WriteLine("--- GetFolderStructureAsync(root 2) ---");
-            //Console.WriteLine(JsonSerializer.Serialize(folderDataRoot));
+            folder = folderDataRoot.Children.FirstOrDefault(f => f.Name == "Folder Name");
+            Assert.IsNotNull(folder, "Folder was not created by path");
 
-            //folder = folderDataRoot.Children.FirstOrDefault(f => f.Name == "Folder Name");
-            //Assert.IsNotNull(folder, "Folder was not created by path");
+            Models.Rule createdRule = await dr.Management.CreateRuleAsync(rule, "/Folder Name");
+            Console.WriteLine("--- CreateRuleAsync ---");
+            Console.WriteLine(JsonSerializer.Serialize(createdRule));
 
-            //Models.Rule createdRule = await dr.Management.CreateRuleAsync(rule, "/Folder Name");
-            //Console.WriteLine("--- CreateRuleAsync ---");
-            //Console.WriteLine(JsonSerializer.Serialize(createdRule));
+            createdRule.Description = "Updated description";
 
-            //createdRule.Description = "Updated description";
+            var ruleByPath = await dr.Management.GetRuleByPathAsync($"/Folder Name/{rule.Name}");
+            Console.WriteLine("--- GetRuleByPathAsync ---");
+            Console.WriteLine(JsonSerializer.Serialize(ruleByPath));
 
-            //var ruleByPath = await dr.Management.GetRuleByPathAsync($"/Folder Name/{rule.Name}");
-            //Console.WriteLine("--- GetRuleByPathAsync ---");
-            //Console.WriteLine(JsonSerializer.Serialize(ruleByPath));
+            var inputData = new Dictionary<string, object> { { "input", new Dictionary<string, object>() } };
+            Job job = await dr.Job.StartAsync(createdRule.RuleId, inputData);
+            Console.WriteLine("--- Job.StartAsync ---");
+            Console.WriteLine(JsonSerializer.Serialize(job));
 
-            //var inputData = new Dictionary<string, object> { { "input", new Dictionary<string, object>() } };
-            //Job job = await dr.Job.StartAsync(createdRule.RuleId, inputData);
-            //Console.WriteLine("--- Job.StartAsync ---");
-            //Console.WriteLine(JsonSerializer.Serialize(job));
+            await Task.Delay(100); // Replaces Thread.sleep
 
-            //await Task.Delay(100); // Replaces Thread.sleep
+            var jobInfo = await dr.Job.GetInfoAsync(job.JobId);
+            Console.WriteLine("--- Job.GetInfoAsync ---");
+            Console.WriteLine(JsonSerializer.Serialize(jobInfo));
 
-            //var jobInfo = await dr.Job.GetInfoAsync(job.JobId);
-            //Console.WriteLine("--- Job.GetInfoAsync ---");
-            //Console.WriteLine(JsonSerializer.Serialize(jobInfo));
+            var canceledJob = await dr.Job.CancelAsync(job.JobId);
+            Console.WriteLine("--- Job.CancelAsync ---");
+            Console.WriteLine(JsonSerializer.Serialize(canceledJob));
 
-            //var canceledJob = await dr.Job.CancelAsync(job.JobId);
-            //Console.WriteLine("--- Job.CancelAsync ---");
-            //Console.WriteLine(JsonSerializer.Serialize(canceledJob));
+            var updatedRule = await dr.Management.UpdateRuleAsync(createdRule.RuleId, createdRule);
+            Console.WriteLine("--- UpdateRuleAsync ---");
+            Console.WriteLine(JsonSerializer.Serialize(updatedRule));
 
-            //var updatedRule = await dr.Management.UpdateRuleAsync(createdRule.RuleId, createdRule);
-            //Console.WriteLine("--- UpdateRuleAsync ---");
-            //Console.WriteLine(JsonSerializer.Serialize(updatedRule));
+            var statusRulePending = await dr.Management.UpdateRuleStatusAsync(createdRule.RuleId, RuleStatus.PENDING, 1);
+            Console.WriteLine("--- UpdateRuleStatusAsync(PENDING) ---");
+            Console.WriteLine(JsonSerializer.Serialize(statusRulePending));
 
-            //var statusRulePending = await dr.Management.UpdateRuleStatusAsync(createdRule.RuleId, RuleStatus.PENDING, 1);
-            //Console.WriteLine("--- UpdateRuleStatusAsync(PENDING) ---");
-            //Console.WriteLine(JsonSerializer.Serialize(statusRulePending));
+            var statusRulePublished = await dr.Management.UpdateRuleStatusAsync(createdRule.RuleId, RuleStatus.PUBLISHED, 1);
+            Console.WriteLine("--- UpdateRuleStatusAsync(PUBLISHED) ---");
+            Console.WriteLine(JsonSerializer.Serialize(statusRulePublished));
 
-            //var statusRulePublished = await dr.Management.UpdateRuleStatusAsync(createdRule.RuleId, RuleStatus.PUBLISHED, 1);
-            //Console.WriteLine("--- UpdateRuleStatusAsync(PUBLISHED) ---");
-            //Console.WriteLine(JsonSerializer.Serialize(statusRulePublished));
+            await dr.Management.LockRuleAsync(createdRule.RuleId, true);
 
-            // await dr.Management.LockRuleAsync(createdRule.RuleId, true);
+            await dr.Management.LockRuleAsync(createdRule.RuleId, false);
 
-            // await dr.Management.LockRuleAsync(createdRule.RuleId, false);
+            await dr.Management.LockRuleByPathAsync($"/Folder Name/{rule.Name}", true, 1);
 
-            // await dr.Management.LockRuleByPathAsync($"/Folder Name/{rule.Name}", true, 1);
+            await dr.Management.LockRuleByPathAsync($"/Folder Name/{rule.Name}", false, 1);
 
-            // await dr.Management.LockRuleByPathAsync($"/Folder Name/{rule.Name}", false, 1);
+            var newVersionRule = await dr.Management.CreateNewRuleVersionAsync(createdRule.RuleId, rule);
+            Console.WriteLine("--- CreateNewRuleVersionAsync ---");
+            Console.WriteLine(JsonSerializer.Serialize(newVersionRule));
 
-            //var newVersionRule = await dr.Management.CreateNewRuleVersionAsync(createdRule.RuleId, rule);
-            //Console.WriteLine("--- CreateNewRuleVersionAsync ---");
-            //Console.WriteLine(JsonSerializer.Serialize(newVersionRule));
+            var ruleV1 = await dr.Management.GetRuleAsync(createdRule.RuleId, 1);
+            Console.WriteLine("--- GetRuleAsync(v1) ---");
+            Console.WriteLine(JsonSerializer.Serialize(ruleV1));
 
-            //var ruleV1 = await dr.Management.GetRuleAsync(createdRule.RuleId, 1);
-            //Console.WriteLine("--- GetRuleAsync(v1) ---");
-            //Console.WriteLine(JsonSerializer.Serialize(ruleV1));
+            var ruleV2 = await dr.Management.GetRuleAsync(createdRule.RuleId, 2);
+            Console.WriteLine("--- GetRuleAsync(v2) ---");
+            Console.WriteLine(JsonSerializer.Serialize(ruleV2));
 
-            //var ruleV2 = await dr.Management.GetRuleAsync(createdRule.RuleId, 2);
-            //Console.WriteLine("--- GetRuleAsync(v2) ---");
-            //Console.WriteLine(JsonSerializer.Serialize(ruleV2));
+            var ruleByPathV1 = await dr.Management.GetRuleByPathAsync($"/Folder Name/{rule.Name}", 1);
+            Console.WriteLine("--- GetRuleByPathAsync(v1) ---");
+            Console.WriteLine(JsonSerializer.Serialize(ruleByPathV1));
 
-            //var ruleByPathV1 = await dr.Management.GetRuleByPathAsync($"/Folder Name/{rule.Name}", 1);
-            //Console.WriteLine("--- GetRuleByPathAsync(v1) ---");
-            //Console.WriteLine(JsonSerializer.Serialize(ruleByPathV1));
+            var ruleByPathV2 = await dr.Management.GetRuleByPathAsync($"/Folder Name/{rule.Name}", 2);
+            Console.WriteLine("--- GetRuleByPathAsync(v2) ---");
+            Console.WriteLine(JsonSerializer.Serialize(ruleByPathV2));
 
-            //var ruleByPathV2 = await dr.Management.GetRuleByPathAsync($"/Folder Name/{rule.Name}", 2);
-            //Console.WriteLine("--- GetRuleByPathAsync(v2) ---");
-            //Console.WriteLine(JsonSerializer.Serialize(ruleByPathV2));
+            FolderExport folderExport = await dr.Management.ExportFolderAsync(folder.Id);
+            Console.WriteLine("--- ExportFolderAsync ---");
+            Console.WriteLine(JsonSerializer.Serialize(folderExport));
 
-            //FolderExport folderExport = await dr.Management.ExportFolderAsync(folder.Id);
-            //Console.WriteLine("--- ExportFolderAsync ---");
-            //Console.WriteLine(JsonSerializer.Serialize(folderExport));
+            await dr.Management.DeleteRuleAsync(createdRule.RuleId, 1);
 
-            //await dr.Management.DeleteRuleAsync(createdRule.RuleId, 1);
+            var ruleAfterDeleteV1 = await dr.Management.GetRuleAsync(createdRule.RuleId); // Should get version 2
+            Console.WriteLine("--- GetRuleAsync(after v1 delete) ---");
+            Console.WriteLine(JsonSerializer.Serialize(ruleAfterDeleteV1));
 
-            //var ruleAfterDeleteV1 = await dr.Management.GetRuleAsync(createdRule.RuleId); // Should get version 2
-            //Console.WriteLine("--- GetRuleAsync(after v1 delete) ---");
-            //Console.WriteLine(JsonSerializer.Serialize(ruleAfterDeleteV1));
+            await dr.Management.DeleteRuleByPathAsync($"/Folder Name/{rule.Name}", 2);
 
-            // await dr.Management.DeleteRuleByPathAsync($"/Folder Name/{rule.Name}", 2);
+            var rulesForSpace = await dr.Management.GetRulesForSpaceAsync();
+            Console.WriteLine("--- GetRulesForSpaceAsync ---");
+            Console.WriteLine(JsonSerializer.Serialize(rulesForSpace));
 
-            //var rulesForSpace = await dr.Management.GetRulesForSpaceAsync();
-            //Console.WriteLine("--- GetRulesForSpaceAsync ---");
-            //Console.WriteLine(JsonSerializer.Serialize(rulesForSpace));
+            await dr.Management.RenameFolderAsync(folder.Id, "New Name");
 
-            //await dr.Management.RenameFolderAsync(folder.Id, "New Name");
+            var importResult = await dr.Management.ImportFolderAsync("root", folderExport);
+            Console.WriteLine("--- ImportFolderAsync ---");
+            Console.WriteLine(JsonSerializer.Serialize(importResult));
 
-            //var importResult = await dr.Management.ImportFolderAsync("root", folderExport);
-            //Console.WriteLine("--- ImportFolderAsync ---");
-            //Console.WriteLine(JsonSerializer.Serialize(importResult));
+            folderDataRoot = await dr.Management.GetFolderStructureAsync();
+            Console.WriteLine("--- GetFolderStructureAsync(after import) ---");
+            Console.WriteLine(JsonSerializer.Serialize(folderDataRoot));
 
-            //folderDataRoot = await dr.Management.GetFolderStructureAsync();
-            //Console.WriteLine("--- GetFolderStructureAsync(after import) ---");
-            //Console.WriteLine(JsonSerializer.Serialize(folderDataRoot));
+            var folder2 = folderDataRoot.Children.FirstOrDefault(f => f.Name == "Folder Name");
+            Assert.IsNotNull(folder2, "Imported folder not found");
 
-            //var folder2 = folderDataRoot.Children.FirstOrDefault(f => f.Name == "Folder Name");
-            //Assert.IsNotNull(folder2, "Imported folder not found");
+            var folder2Structure = await dr.Management.GetFolderStructureAsync(folder2.Id);
+            Console.WriteLine("--- GetFolderStructureAsync(folder2) ---");
+            Console.WriteLine(JsonSerializer.Serialize(folder2Structure));
 
-            //var folder2Structure = await dr.Management.GetFolderStructureAsync(folder2.Id);
-            //Console.WriteLine("--- GetFolderStructureAsync(folder2) ---");
-            //Console.WriteLine(JsonSerializer.Serialize(folder2Structure));
+            var nodesToMove = new FolderNode[]
+            {
+            new FolderNode(folder2.Id, FolderType.FOLDER)
+            };
+            await dr.Management.MoveFolderAsync(folder.Id, nodesToMove, "/New Name");
 
-            //var nodesToMove = new FolderNode[]
-            //{
-            //new FolderNode(folder2.Id, FolderType.FOLDER)
-            //};
-            //await dr.Management.MoveFolderAsync(folder.Id, nodesToMove, "/New Name");
+            var findResult = await dr.Management.FindFolderOrRuleByAttributeAsync(
+                new FindOptions(null, null, null, null, null, null, null, FolderType.RULE, null));
+            Console.WriteLine("--- FindFolderOrRuleByAttributeAsync ---");
+            Console.WriteLine(JsonSerializer.Serialize(findResult));
 
-            //var findResult = await dr.Management.FindFolderOrRuleByAttributeAsync(
-            //    new FindOptions(null, null, null, null, null, null, null, FolderType.RULE, null));
-            //Console.WriteLine("--- FindFolderOrRuleByAttributeAsync ---");
-            //Console.WriteLine(JsonSerializer.Serialize(findResult));
-
-            //await dr.Management.DeleteFolderByPathAsync("/New Name", true);
+            await dr.Management.DeleteFolderByPathAsync("/New Name", true);
 
         }
     }
