@@ -6,7 +6,6 @@ A [Decisionrules.io](https://decisionrules.io) library that allows you to integr
 
 ## Table of contents
 1.  [Migration Guide from v3 to v4](#migration-guide-from-v3-to-v4)
-1.  [Installation](#installation)
 2.  [Usage and Examples](#usage-and-examples)
 3.  [API](#api)
 
@@ -212,25 +211,6 @@ await dr.Management.UpdateRuleStatusAsync(itemId, RuleStatus.PUBLISHED, 1);
 
 ---
 
-## Installation
-
-### NuGet Package Manager
-```bash
-Install-Package DecisionRules.NET
-```
-
-### .NET CLI
-```bash
-dotnet add package DecisionRules.NET
-```
-
-### PackageReference
-Add the following to your `.csproj` file:
-```xml
-<PackageReference Include="DecisionRules.NET" Version="LATEST" />
-```
-
----
 
 ## Usage and Examples
 
