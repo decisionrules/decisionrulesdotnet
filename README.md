@@ -246,11 +246,25 @@ var inputData = new Dictionary<string, object>
     }
 };
 
+string inputJson = @"
+{
+    ""tripDetails"": {
+        ""origin"": ""ATL"",
+        ""destination"": ""DXB""
+    }
+}";
+
 // Solve the rule and get the raw JSON string result
 string resultJson = await dr.SolveAsync("ruleIdOrAlias", inputData);
 
+// Solve the rule using the JSON string
+string resultJsonFromStringInput = await dr.SolveAsync("ruleIdOrAlias", inputJson);
+
 // You can then parse the JSON string as needed
 var result = JsonSerializer.Deserialize<Dictionary<string, object>>(resultJson);
+
+// Same with string input response
+result = JsonSerializer.Deserialize<Dictionary<string, object>>(resultJsonFromStringInput);
 ```
 
 ### Management API Example
