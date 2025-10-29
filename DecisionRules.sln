@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.32421.90
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11010.61 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecisionRules", "DecisionRules\DecisionRules.csproj", "{40F076FF-5792-498E-BA14-5C0CCB737E4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DecisionRules.Test", "DecisionRules.Test\DecisionRules.Test.csproj", "{4D75844E-D7A8-409E-BCE2-4F5E74DAEB4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{40F076FF-5792-498E-BA14-5C0CCB737E4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40F076FF-5792-498E-BA14-5C0CCB737E4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40F076FF-5792-498E-BA14-5C0CCB737E4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D75844E-D7A8-409E-BCE2-4F5E74DAEB4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D75844E-D7A8-409E-BCE2-4F5E74DAEB4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D75844E-D7A8-409E-BCE2-4F5E74DAEB4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D75844E-D7A8-409E-BCE2-4F5E74DAEB4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

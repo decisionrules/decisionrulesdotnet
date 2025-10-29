@@ -1,285 +1,408 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DecisionRules
+﻿namespace DecisionRules
 {
-    public class Management: ApiBase
+    using DecisionRules.Api;
+    // Assuming these namespaces exist in the .NET version of the DecisionRules library
+    using DecisionRules.Enums;
+    using DecisionRules.Models;
+    using DecisionRules.Utilities;
+    // Necessary 'using' directives for .NET libraries
+    using System;
+    using System.Data;
+    using System.Threading.Tasks;
+
+
+    public class Management
     {
-        private readonly string _urlBase;
+        private readonly DecisionRulesService _service;
+        private readonly ManagementApi managementApi;
 
-        public Management(string apiKey) : this(apiKey, new CustomDomain("api.decisionrules.io", Enums.Protocol.HTTPS, 443), new CamelCaseNamingStrategy()) { }
-        public Management(string apiKey, CustomDomain customDomain) : this(apiKey, customDomain, new CamelCaseNamingStrategy()) { }
-        public Management(string apiKey, CustomDomain customDomain, NamingStrategy namingStrategy) : base(apiKey, customDomain, namingStrategy) 
+        internal Management(DecisionRulesService service, HttpClient httpClient)
         {
-            _urlBase = base._url.CreateManagementUrl();
+            _service = service;
+            managementApi = new ManagementApi(httpClient);
         }
-        
-        public async Task<U> GetRule<U>(string itemId)
-        {
-            return await GetRule<U>(itemId, 1);
-        }
-        public async Task<U> GetRule<U>(string itemId, int version)
-        {
-            string taskUrl = _urlBase;
 
-            if (version > 1)
+        public async Task<Models.Rule> GetRuleAsync(string ruleIdOrAlias, int? version = null)
+        {
+            try
             {
-                taskUrl += $"/rule/{itemId}/{version}";
+                return await managementApi.GetRuleApiAsync(_service._options, ruleIdOrAlias, version, null);
             }
-            else
+            catch (Exception e)
             {
-                taskUrl += $"/rule/{itemId}";
+                throw Utils.HandleError(e); // Assuming a static HandleError method
             }
-
-            HttpResponseMessage respose = await _client.GetAsync(taskUrl);
-
-            return JsonConvert.DeserializeObject<U>(await respose.Content.ReadAsStringAsync());
         }
 
-        public async Task<U> GetSpaceItems<U>()
+        public async Task<Models.Rule> GetRuleByPathAsync(string path, int? version = null)
         {
-            string taskUrl = $"{_urlBase}/space/items";
-
-            HttpResponseMessage respose = await _client.GetAsync(taskUrl);
-
-            Console.WriteLine(respose.Content.ReadAsStringAsync().Result);
-
-            return JsonConvert.DeserializeObject<U>(await respose.Content.ReadAsStringAsync()); ;
-        }
-        public async Task<U> GetSpaceItems<U>(string[] tags)
-        {
-            string joinedTags = string.Join(",", tags);
-
-            string taskUrl = $"{_urlBase}/tags/items/?tags={joinedTags}";
-
-            HttpResponseMessage response = await _client.GetAsync(taskUrl);
-
-            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
-        }
-
-        public async Task<U> CreateRule<T, U>(T body)
-        {
-            string taskUrl = $"{_urlBase}/rule/";
-
-            string request = JsonConvert.SerializeObject(body, _settings);
-
-            HttpResponseMessage response = await _client.PostAsync(taskUrl, new StringContent(request, Encoding.UTF8, "application/json"));
-
-            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
-        }
-
-        public async Task<U> CreateRule<T, U>(string spaceId, T body)
-        {
-            string taskUrl = $"{_urlBase}/rule/{spaceId}";
-
-            string request = JsonConvert.SerializeObject(body, _settings);
-
-            HttpResponseMessage response = await _client.PostAsync(taskUrl, new StringContent(request, Encoding.UTF8, "application/json"));
-
-            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
-        }
-
-        public async Task<HttpStatusCode> UpdateRule<T>(string itemId, T body)
-        {
-            return await UpdateRule<T>(itemId, body, 1);
-        }
-
-        public async Task<HttpStatusCode> UpdateRule<T>(string itemId, T body, int version)
-        {
-            string taskUrl = $"{_urlBase}/rule/{itemId}/{version}";
-
-            string request = JsonConvert.SerializeObject(body, _settings);
-
-            HttpResponseMessage response = await _client.PutAsync(taskUrl, new StringContent(request, Encoding.UTF8, "application/json"));
-
-            return response.StatusCode;
-        }
-
-        public async Task<HttpStatusCode> DeleteRule(string itemId, int version)
-        {
-            string taskUrl = $"{_urlBase}/rule/{itemId}/{version}";
-
-            HttpResponseMessage response = await _client.DeleteAsync(taskUrl);
-
-            return response.StatusCode;
-        }
-
-        public async Task<U> GetRuleFlow<U>(string itemId)
-        {
-            return await GetRuleFlow<U>(itemId, 1);
-        }
-
-        public async Task<U> GetRuleFlow<U>(string itemId, int version)
-        {
-            string taskUrl = _urlBase;
-
-            if (version > 1)
+            try
             {
-                taskUrl += $"/rule-flow/{itemId}/{version}";
+                var ruleOptions = new RuleOptions { Path = path, Version = version };
+                return await managementApi.GetRuleApiAsync(_service._options, "", version, ruleOptions);
             }
-            else
+            catch (Exception e)
             {
-                taskUrl += $"/rule-flow/{itemId}";
+                throw Utils.HandleError(e);
             }
-
-            HttpResponseMessage respose = await _client.GetAsync(taskUrl);
-
-            return JsonConvert.DeserializeObject<U>(await respose.Content.ReadAsStringAsync());
         }
 
-        public async Task<U> CreateRuleFlow<T, U>(T body)
+        public async Task<Models.Rule> UpdateRuleStatusAsync(string ruleIdOrAlias, RuleStatus status, int? version)
         {
-            string taskUrl = $"{_urlBase}/rule-flow";
 
-            string request = JsonConvert.SerializeObject(body, _settings);
+                return await managementApi.UpdateRuleStatusApiAsync(_service._options, ruleIdOrAlias, status, version);
 
-            HttpResponseMessage response = await _client.PostAsync(taskUrl, new StringContent(request, Encoding.UTF8, "application/json"));
-
-            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<HttpStatusCode> UpdateRuleFlow<T>(string itemId, T body)
+        public async Task<Models.Rule> UpdateRuleAsync(string ruleIdOrAlias, Models.Rule rule, int? version = null)
         {
-            return await UpdateRuleFlow<T>(itemId, body, 1);
-        }
-
-        public async Task<HttpStatusCode> UpdateRuleFlow<T>(string itemId, T body, int version)
-        {
-            string taskUrl = $"{_urlBase}/rule-flow/{itemId}/{version}";
-
-            string request = JsonConvert.SerializeObject(body, _settings);
-
-            HttpResponseMessage response = await _client.PutAsync(taskUrl, new StringContent(request, Encoding.UTF8, "application/json"));
-
-            return response.StatusCode;
-        }
-
-        public async Task<HttpStatusCode> DeleteRuleFlow(string itemId, int version)
-        {
-            string taskUrl = $"{_urlBase}/rule-flow/{itemId}/{version}";
-
-            HttpResponseMessage response = await _client.DeleteAsync(taskUrl);
-
-            return response.StatusCode;
-        }
-
-        public async Task<U> ExportRuleFlow<U>(string itemId)
-        {
-            return await ExportRuleFlow<U>(itemId, 1);
-        }
-
-        public async Task<U> ExportRuleFlow<U>(string itemId, int version)
-        {
-            string taskUrl = _urlBase;
-
-            if (version > 1)
+            try
             {
-                taskUrl += $"/rule-flow/export/{itemId}/{version}";
+                return await managementApi.UpdateRuleApiAsync(_service._options, ruleIdOrAlias, rule, version);
             }
-            else
+            catch (Exception e)
             {
-                taskUrl += $"/rule-flow/export/{itemId}";
+                throw Utils.HandleError(e);
             }
-
-            HttpResponseMessage response = await _client.GetAsync(taskUrl);
-
-            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<U> ImportRuleFlow<T, U>(T data)
+        public async Task<Models.Rule> CreateRuleAsync(Models.Rule rule, string path = null)
         {
-            return await ImportRuleFlow<T, U>(data, null, 1);
-        }
-
-        public async Task<U> ImportRuleFlow<T, U>(T data, string itemId)
-        {
-            return await ImportRuleFlow<T, U>(data, itemId, 1);
-        }
-
-        public async Task<U> ImportRuleFlow<T, U>(T data, string itemId, int version)
-        {
-            string taskUrl = "";
-
-            if (string.IsNullOrEmpty(itemId) && version == 1)
+            try
             {
-                taskUrl = $"{_urlBase}/rule-flow/import";
-            } else if (!string.IsNullOrEmpty(itemId) && version == 1)
-            {
-                taskUrl = $"{_urlBase}/rule-flow/import/?new-version={itemId}";
-            } else if (!string.IsNullOrEmpty(itemId) && version > 1)
-            {
-                taskUrl = $"{_urlBase}/rule-flow/import/?overwrite={itemId}&version={version}";
+                var ruleOptions = !string.IsNullOrEmpty(path) ? new RuleOptions { Path = path } : null;
+                return await managementApi.CreateRuleApiAsync(_service._options, rule, ruleOptions);
             }
-
-            string request = JsonConvert.SerializeObject(data, _settings);
-
-            HttpResponseMessage response = await _client.PostAsync(taskUrl, new StringContent(request, Encoding.UTF8, "application/json"));
-
-            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
-        }
-
-
-        public async Task<U> ChangeRuleStatus<U>(string itemId, string status, int version)
-        {
-            string taskUrl = $"{_urlBase}/rule/status/{itemId}/{status}/{version}";
-
-            HttpResponseMessage response = await _client.PutAsync(taskUrl, null);
-
-            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
-        }
-
-        public async Task<U> ChangeRuleFlowStatus<U>(string itemId, string status, int version)
-        {
-            string taskUrl = $"{_urlBase}/rule-flow/status/{itemId}/{status}/{version}";
-
-            HttpResponseMessage response = await _client.PutAsync(taskUrl, null);
-
-            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
-        }
-
-        public async Task<U> UpdateTags<T, U>(T data, string itemId)
-        {
-            return await this.UpdateTags<T, U>(data, itemId, 1);
-        }
-
-        public async Task<U> UpdateTags<T, U>(T data, string itemId, int version)
-        {
-            string taskUrl = $"{_urlBase}/tags/{itemId}/{version}";
-
-            HttpRequestMessage request = new HttpRequestMessage(new HttpMethod("PATCH"), taskUrl);
-
-            var requestData = JsonConvert.SerializeObject(data, _settings);
-
-            request.Content = new StringContent(requestData, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await _client.SendAsync(request);
-
-            return JsonConvert.DeserializeObject<U>(await response.Content.ReadAsStringAsync());
-        }
-
-        public async Task<HttpStatusCode> DeleteTags(string itemId, string[] tags, int version = 0)
-        {
-            string taskUrl = _urlBase;
-
-            var xtags = string.Join(",", tags);
-
-            if (version > 0)
+            catch (Exception e)
             {
-                taskUrl += $"/tags/{itemId}/{version}/?tags={xtags}";
+                throw Utils.HandleError(e);
             }
-            else
+        }
+
+        public async Task<Models.Rule> CreateNewRuleVersionAsync(string ruleIdOrAlias, Models.Rule rule)
+        {
+            try
             {
-                taskUrl += $"/tags/{itemId}/?tags={xtags}";
+                return await managementApi.CreateNewRuleVersionApiAsync(_service._options, ruleIdOrAlias, rule);
             }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
 
-            HttpResponseMessage response = await _client.DeleteAsync(taskUrl);
+        public async Task DeleteRuleAsync(string ruleIdOrAlias, int? version = null)
+        {
+            try
+            {
+                await managementApi.DeleteRuleApiAsync(_service._options, ruleIdOrAlias, version, null);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
 
-            return response.StatusCode;
+        public async Task DeleteRuleByPathAsync(string path, int? version = null)
+        {
+            try
+            {
+                var ruleOptions = new RuleOptions { Path = path, Version = version };
+                await managementApi.DeleteRuleApiAsync(_service._options, "", null, ruleOptions);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task LockRuleAsync(string ruleIdOrAlias, bool isLocked, int? version = null)
+        {
+            try
+            {
+                await managementApi.LockRuleApiAsync(_service._options, ruleIdOrAlias, isLocked, version, null);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task LockRuleByPathAsync(string path, bool isLocked, int? version = null)
+        {
+            try
+            {
+                var ruleOptions = new RuleOptions { Path = path, Version = version };
+                await managementApi.LockRuleApiAsync(_service._options, "", isLocked, version, ruleOptions);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<Duplicates> FindDuplicatesAsync(string ruleIdOrAlias, int? version = null)
+        {
+            try
+            {
+                return await managementApi.FindDuplicatesApiAsync(_service._options, ruleIdOrAlias, version);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<Dependencies> FindDependenciesAsync(string ruleIdOrAlias, int? version = null)
+        {
+            try
+            {
+                return await managementApi.FindDependenciesApiAsync(_service._options, ruleIdOrAlias, version);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<Models.Rule[]> GetRulesForSpaceAsync()
+        {
+            try
+            {
+                return await managementApi.GetRulesForSpaceApiAsync(_service._options);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<Models.Rule[]> GetRulesByTagsAsync(string[] tags)
+        {
+            try
+            {
+                return await managementApi.GetRulesByTagsApiAsync(_service._options, tags);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<string[]> UpdateTagsAsync(string ruleIdOrAlias, string[] tags, int? version = null)
+        {
+            try
+            {
+                return await managementApi.AddTagsApiAsync(_service._options, ruleIdOrAlias, tags, version);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task DeleteTagsAsync(string ruleIdOrAlias, string[] tags, int? version = null)
+        {
+            try
+            {
+                await managementApi.DeleteTagsApiAsync(_service._options, ruleIdOrAlias, tags, version);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task CreateFolderAsync(string targetNodeId, FolderData data)
+        {
+            try
+            {
+                await managementApi.CreateFolderApiAsync(_service._options, targetNodeId, data, null);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task CreateFolderByPathAsync(string path, FolderData data)
+        {
+            try
+            {
+                await managementApi.CreateFolderApiAsync(_service._options, "", data, new FolderOptions { Path = path });
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<FolderData> UpdateNodeFolderStructureAsync(string targetNodeId, FolderData data)
+        {
+            try
+            {
+                return await managementApi.UpdateNodeFolderStructureApiAsync(_service._options, targetNodeId, data, null);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<FolderData> UpdateNodeFolderStructureByPathAsync(string path, FolderData data)
+        {
+            try
+            {
+                return await managementApi.UpdateNodeFolderStructureApiAsync(_service._options, "", data, new FolderOptions { Path = path });
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<FolderExport> ExportFolderAsync(string nodeId)
+        {
+            try
+            {
+                return await managementApi.ExportFolderApiAsync(_service._options, nodeId, null);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<FolderExport> ExportFolderByPathAsync(string path)
+        {
+            try
+            {
+                return await managementApi.ExportFolderApiAsync(_service._options, "", new FolderOptions { Path = path });
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<FolderImport> ImportFolderAsync(string targetNodeId, object data)
+        {
+            try
+            {
+                return await managementApi.ImportFolderApiAsync(_service._options, targetNodeId, data, null);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<FolderImport> ImportFolderToPathAsync(string path, object data)
+        {
+            try
+            {
+                return await managementApi.ImportFolderApiAsync(_service._options, "", data, new FolderOptions { Path = path });
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<FolderData> GetFolderStructureAsync(string targetNodeId = "")
+        {
+            try
+            {
+                return await managementApi.GetFolderStructureApiAsync(_service._options, targetNodeId, null);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<FolderData> GetFolderStructureByPathAsync(string path)
+        {
+            try
+            {
+                return await managementApi.GetFolderStructureApiAsync(_service._options, null, new FolderOptions { Path = path });
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task DeleteFolderAsync(string targetNodeId, bool deleteAll)
+        {
+            try
+            {
+                await managementApi.DeleteFolderApiAsync(_service._options, targetNodeId, deleteAll, null);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task DeleteFolderByPathAsync(string path, bool deleteAll)
+        {
+            try
+            {
+                await managementApi.DeleteFolderApiAsync(_service._options, "", deleteAll, new FolderOptions { Path = path });
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task RenameFolderAsync(string targetNodeId, string newName)
+        {
+            try
+            {
+                await managementApi.RenameFolderApiAsync(_service._options, targetNodeId, newName, null);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task RenameFolderByPathAsync(string path, string newName)
+        {
+            try
+            {
+                await managementApi.RenameFolderApiAsync(_service._options, "", newName, new FolderOptions { Path = path });
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task MoveFolderAsync(string targetId, FolderNode[] nodes, string targetPath)
+        {
+            try
+            {
+                await managementApi.MoveFolderApiAsync(_service._options, targetId, nodes, targetPath);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
+        }
+
+        public async Task<string> FindFolderOrRuleByAttributeAsync(FindOptions data)
+        {
+            try
+            {
+                return await managementApi.FindFolderOrRuleByAttributeApiAsync(_service._options, data);
+            }
+            catch (Exception e)
+            {
+                throw Utils.HandleError(e);
+            }
         }
     }
 }

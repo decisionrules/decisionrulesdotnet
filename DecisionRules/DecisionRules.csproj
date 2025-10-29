@@ -1,33 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>Simple library that allows you to easily connect to Decisionrules.io from your application.</Description>
-    <PackageIcon>dricon.png</PackageIcon>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/decisionrules/decisionrulesdotnet</RepositoryUrl>
-    <PackageTags>decision;decisionrules;rule;ruleengine;engine;api</PackageTags>
-    <AssemblyVersion>3.0.0</AssemblyVersion>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>3.1.0</Version>
-    <Copyright>MIT</Copyright>
-    <PackageProjectUrl>https://github.com/decisionrules/decisionrulesdotnet</PackageProjectUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-  </PropertyGroup>
+	<PropertyGroup>
+		<!-- Targeting .NET 9 -->
+		<TargetFramework>net9.0</TargetFramework>
 
-  <ItemGroup>
-    <None Include="..\dricon.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+		<Description>Simple library that allows you to easily connect to Decisionrules.io from your application.</Description>
+		<PackageIcon>dricon.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/decisionrules/decisionrulesdotnet</RepositoryUrl>
+		<PackageTags>decision;decisionrules;rule;ruleengine;engine;api</PackageTags>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
+		<!-- Update version numbers as appropriate -->
+		<AssemblyVersion>4.0.0</AssemblyVersion>
+		<Version>4.0.0</Version>
+
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Copyright>Custom property</Copyright>
+		<PackageProjectUrl>https://github.com/decisionrules/decisionrulesdotnet</PackageProjectUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+		<!-- Optional: Enable implicit usings and nullable reference types (recommended for .NET 8) -->
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PackageId>decisionrules</PackageId>
+		<Title>Decisionrules SDK</Title>
+		<Authors>DecisionRules</Authors>
+		<Company>DecisionRules a.s.</Company>
+		<Product>DecisionRules</Product>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\dricon.png" Pack="True" PackagePath="\" />
+		<None Include="..\README.md" Pack="True" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Newtonsoft.Json is still supported -->
+		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.10" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+
+		<!-- System.Text.Json is part of .NET 8, so explicit reference usually not needed -->
+		<!-- Keeping it only if you need a specific version -->
+		<PackageReference Include="System.Text.Json" Version="9.0.0" />
+	</ItemGroup>
 
 </Project>

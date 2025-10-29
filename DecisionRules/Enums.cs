@@ -1,33 +1,74 @@
-﻿namespace DecisionRules
+﻿using Newtonsoft.Json;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
+
+namespace DecisionRules.Enums
 {
-    public class Enums
+    /// <summary>
+    /// Specifies the DecisionRules API host region. The EnumMember attribute ensures correct JSON serialization.
+    /// </summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum HostEnum
     {
-        public enum Protocol
-        {
-            HTTP,
-            HTTPS 
-        }
+        [EnumMember(Value = "global_cloud")]
+        GlobalCloud,
 
-        public enum RuleStrategy
-        {
-            STANDARD,
-            ARRAY,
-            FIRST_MATCH,
-            EVALUATE_ALL
-        }
+        [EnumMember(Value = "region_eu")]
+        RegionEU,
 
-        public enum SolverMode
-        {
-            RULE,
-            COMPOSITION
-        }
+        [EnumMember(Value = "region_us")]
+        RegionUS,
 
-        public enum RuleFlowStrategy
-        {
-            STANDARD,
-            ARRAY,
-            FIRST_MATCH,
-        }
+        [EnumMember(Value = "region_au")]
+        RegionAU
+    }
 
+    /// <summary>
+    /// Defines the type of a node in the folder structure.
+    /// </summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum FolderType
+    {
+        ROOT,
+        FOLDER,
+        RULE
+    }
+
+    /// <summary>
+    /// Represents the status of a rule.
+    /// </summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum RuleStatus
+    {
+        [EnumMember(Value = "pending")]
+        PENDING,
+
+        [EnumMember(Value = "published")]
+        PUBLISHED
+    }
+
+    /// <summary>
+    /// Represents the category for management API operations.
+    /// </summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum MngCategoryEnum
+    {
+        [EnumMember(Value = "rule")]
+        Rule,
+
+        [EnumMember(Value = "space")]
+        Space,
+
+        [EnumMember(Value = "tags")]
+        Tags,
+
+        [EnumMember(Value = "folder")]
+        Folder,
+
+        [EnumMember(Value = "tools")]
+        Tools,
+
+        [EnumMember(Value = "rule-flow")]
+        RuleFlow
     }
 }
