@@ -71,4 +71,23 @@ namespace DecisionRules.Enums
         [EnumMember(Value = "rule-flow")]
         RuleFlow
     }
+
+    /// <summary>
+    /// Represents the category for management API operations.
+    /// </summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum StrategyOptions
+    {
+        [EnumMember(Value = "STANDARD")]
+        STANDARD,
+
+        [EnumMember(Value = "ARRAY")]
+        ARRAY,
+
+        [EnumMember(Value = "FIRST_MATCH")]
+        FIRST_MATCH,
+
+        [EnumMember(Value = "EVALUATE_ALL")]
+        EVALUATE_ALL
+    }
 }
