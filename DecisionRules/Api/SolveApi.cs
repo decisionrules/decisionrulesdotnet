@@ -38,6 +38,7 @@ namespace DecisionRules.Api
             // C# equivalent of (version != null && version > 0)
             if (version.HasValue && version.Value > 0)
             {
+                path += "/";
                 path += version.Value.ToString();
             }
 
