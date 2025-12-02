@@ -1,10 +1,11 @@
-﻿using System;
+﻿using DecisionRules.Exceptions; // Required for DecisionRulesErrorException
+using DecisionRules.Models;
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using DecisionRules.Exceptions; // Required for DecisionRulesErrorException
 
 namespace DecisionRules.Utilities
 {
@@ -127,6 +128,54 @@ namespace DecisionRules.Utilities
                 // This mimics the Java code's behavior: print message and return null.
                 Console.WriteLine(e.Message);
                 return null;
+            }
+        }
+
+        public static void PopulateDefaultHeaders(
+            HttpClient httpClient,
+            DecisionRulesOptions options,
+            SolverOptions? solverOptions = null)
+        {
+            if (!string.IsNullOrEmpty(options?.SolverKey))
+            {
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", options.SolverKey);
+            }
+            else
+            {
+                throw new InvalidOperationException("Solver key missing.");
+            }
+
+            httpClient.DefaultRequestHeaders.Add("X-Debug",
+                (solverOptions?.Debug ?? false).ToString().ToLower());
+
+            if (!string.IsNullOrEmpty(solverOptions?.CorrId))
+            {
+                httpClient.DefaultRequestHeaders.Add("X-Correlation-Id", solverOptions.CorrId);
+            }
+
+            if (solverOptions?.Strategy != null)
+            {
+                httpClient.DefaultRequestHeaders.Add("X-Strategy", solverOptions?.Strategy.ToString());
+            }
+            else
+            {
+                httpClient.DefaultRequestHeaders.Add("X-Strategy", "STANDARD");
+            }
+
+            httpClient.DefaultRequestHeaders.Add("X-Audit",
+                (solverOptions?.Audit ?? false).ToString().ToLower());
+
+            if (solverOptions?.AuditTtl.HasValue == true)
+            {
+                httpClient.DefaultRequestHeaders.Add("X-Audit-Ttl",
+                    solverOptions.AuditTtl.Value.ToString());
+            }
+
+            if (!string.IsNullOrEmpty(solverOptions?.LookupMethod.ToString()))
+            {
+                httpClient.DefaultRequestHeaders.Add("X-Lookup-Method",
+                    solverOptions?.LookupMethod.ToString());
             }
         }
     }

@@ -90,4 +90,18 @@ namespace DecisionRules.Enums
         [EnumMember(Value = "EVALUATE_ALL")]
         EVALUATE_ALL
     }
+
+
+    /// <summary>
+    /// Represents options of Lookup Table methods.
+    /// </summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum LookupMethodOptions
+    {
+        [EnumMember(Value = "LOOKUP_VALUE")]
+        LOOKUP_VALUE,
+
+        [EnumMember(Value = "LOOKUP_EXISTS")]
+        LOOKUP_EXISTS,
+    }
 }

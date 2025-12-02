@@ -31,7 +31,7 @@ namespace DecisionRules
         /// <param name="host">The base URL of the DecisionRules API or a predefined region string.</param>
         /// <param name="solverKey">Your solver API key.</param>
         /// <param name="managementKey">Your management API key.</param>
-        public DecisionRulesOptions(string host, string solverKey, string managementKey)
+        public DecisionRulesOptions(string host, string? solverKey = null, string? managementKey = null)
         {
             this.Host = host;
             this.SolverKey = solverKey;
@@ -44,10 +44,9 @@ namespace DecisionRules
         /// <param name="host">The predefined <see cref="HostEnum"/> region.</param>
         /// <param name="solverKey">Your solver API key.</param>
         /// <param name="managementKey">Your management API key.</param>
-        public DecisionRulesOptions(HostEnum host, string solverKey, string managementKey)
+        public DecisionRulesOptions(HostEnum host, string? solverKey = null, string? managementKey = null)
             : this(GetHostStringFromEnum(host), solverKey, managementKey)
         {
-            // The body is empty as all logic is handled by the constructor chain.
         }
 
         /// <summary>
@@ -58,6 +57,71 @@ namespace DecisionRules
             var memberInfo = typeof(HostEnum).GetField(host.ToString());
             var attribute = memberInfo?.GetCustomAttribute<EnumMemberAttribute>();
             return attribute?.Value ?? host.ToString().ToLowerInvariant();
+        }
+
+        /// <summary>
+        /// Creates a new builder for constructing DecisionRulesOptions.
+        /// </summary>
+        public static Builder CreateBuilder() => new Builder();
+
+        /// <summary>
+        /// Builder class for creating DecisionRulesOptions instances.
+        /// </summary>
+        public class Builder
+        {
+            private string? _host;
+            private string? _solverKey;
+            private string? _managementKey;
+
+            /// <summary>
+            /// Sets the host using a custom URL string.
+            /// </summary>
+            public Builder WithHost(string host)
+            {
+                _host = host;
+                return this;
+            }
+
+            /// <summary>
+            /// Sets the host using a predefined HostEnum region.
+            /// </summary>
+            public Builder WithHost(HostEnum host)
+            {
+                _host = GetHostStringFromEnum(host);
+                return this;
+            }
+
+            /// <summary>
+            /// Sets the Solver API key.
+            /// </summary>
+            public Builder WithSolverKey(string? solverKey)
+            {
+                _solverKey = solverKey;
+                return this;
+            }
+
+            /// <summary>
+            /// Sets the Management API key.
+            /// </summary>
+            public Builder WithManagementKey(string? managementKey)
+            {
+                _managementKey = managementKey;
+                return this;
+            }
+
+            /// <summary>
+            /// Builds and returns the DecisionRulesOptions instance.
+            /// </summary>
+            /// <exception cref="InvalidOperationException">Thrown when Host is not set.</exception>
+            public DecisionRulesOptions Build()
+            {
+                if (string.IsNullOrEmpty(_host))
+                {
+                    throw new InvalidOperationException("Host must be set before building DecisionRulesOptions.");
+                }
+
+                return new DecisionRulesOptions(_host, _solverKey, _managementKey);
+            }
         }
     }
 }
