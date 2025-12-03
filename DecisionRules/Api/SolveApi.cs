@@ -94,6 +94,9 @@ namespace DecisionRules.Api
                     // Set Authorization header
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.SolverKey);
 
+                    // Set Headers
+                    Utils.PopulateDefaultHeaders(_httpClient, _options, solverOptions);
+
                     // Set Content and Content-Type
                     request.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
