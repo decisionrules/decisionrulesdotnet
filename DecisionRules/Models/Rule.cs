@@ -65,10 +65,9 @@ namespace DecisionRules.Models
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? Locked { get; set; }
 
-        // Changed type to object to support both string and dictionary alias info
         [JsonPropertyName("ruleAliasInfo")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public object? RuleAliasInfo { get; set; }
+        public string? RuleAliasInfo { get; set; }
 
         [JsonPropertyName("sessionId")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
