@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<!-- Targeting .NET 9 -->
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 
 		<Description>Simple library that allows you to easily connect to Decisionrules.io from your application.</Description>
 		<PackageIcon>dricon.png</PackageIcon>
@@ -11,8 +10,8 @@
 		<PackageTags>decision;decisionrules;rule;ruleengine;engine;api</PackageTags>
 
 		<!-- Update version numbers as appropriate -->
-		<AssemblyVersion>4.0.3</AssemblyVersion>
-		<Version>4.0.3</Version>
+		<AssemblyVersion>4.0.4</AssemblyVersion>
+		<Version>4.0.4</Version>
 
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Copyright>Custom property</Copyright>

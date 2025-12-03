@@ -4,8 +4,6 @@ using System.Text.Json.Serialization;
 
 namespace DecisionRules.Models
 {
-    // In System.Text.Json, ignoring unknown properties is the default
-    // behavior, so @JsonIgnoreProperties(ignoreUnknown = true) is not needed.
     public class Rule
     {
         [JsonPropertyName("name")]
@@ -25,7 +23,7 @@ namespace DecisionRules.Models
         public object? OutputSchema { get; set; }
 
         [JsonPropertyName("version")]
-        public int Version { get; set; } // int is non-nullable, matches Java's 'int'
+        public int Version { get; set; }
 
         [JsonPropertyName("lastUpdate")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -119,6 +117,24 @@ namespace DecisionRules.Models
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public object? WorkflowData { get; set; }
 
+        // --- NEW PROPERTIES ADDED BELOW ---
+
+        [JsonPropertyName("columns")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public List<object>? Columns { get; set; }
+
+        [JsonPropertyName("primaryKeyColumn")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? PrimaryKeyColumn { get; set; }
+
+        [JsonPropertyName("data")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public object? Data { get; set; } // Object type allows for both Dictionary and specific structures
+
+        [JsonPropertyName("sourceData")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public List<object>? SourceData { get; set; }
+
         /// <summary>
         /// Default constructor for deserialization
         /// </summary>
@@ -127,7 +143,41 @@ namespace DecisionRules.Models
         /// <summary>
         /// Full constructor
         /// </summary>
-        public Rule(string? name, string? description, object? inputSchema, object? outputSchema, int version, DateTime? lastUpdate, DateTime? createdIn, string? status, string? baseId, string? ruleId, string? type, List<string>? tags, Dictionary<string, object>? auditLog, string? ruleAlias, bool? locked, string? ruleAliasInfo, string? sessionId, Dictionary<string, object>? decisionTable, object? visualEditorData, string? compositionId, object? dataTree, List<object>? rules, List<object>? nodes, List<object>? userVariables, string? previousBaseId, object? script, List<string>? selectedWebhookAliases, object? workflowData)
+        public Rule(
+            string? name,
+            string? description,
+            object? inputSchema,
+            object? outputSchema,
+            int version,
+            DateTime? lastUpdate,
+            DateTime? createdIn,
+            string? status,
+            string? baseId,
+            string? ruleId,
+            string? type,
+            List<string>? tags,
+            Dictionary<string, object>? auditLog,
+            string? ruleAlias,
+            bool? locked,
+            object? ruleAliasInfo,
+            string? sessionId,
+            Dictionary<string, object>? decisionTable,
+            object? visualEditorData,
+            string? compositionId,
+            object? dataTree,
+            List<object>? rules,
+            List<object>? nodes,
+            List<object>? userVariables,
+            string? previousBaseId,
+            object? script,
+            List<string>? selectedWebhookAliases,
+            object? workflowData,
+            // New params
+            List<object>? columns,
+            string? primaryKeyColumn,
+            object? data,
+            List<object>? sourceData
+        )
         {
             Name = name;
             Description = description;
@@ -157,11 +207,13 @@ namespace DecisionRules.Models
             Script = script;
             SelectedWebhookAliases = selectedWebhookAliases;
             WorkflowData = workflowData;
+            // New Assignments
+            Columns = columns;
+            PrimaryKeyColumn = primaryKeyColumn;
+            Data = data;
+            SourceData = sourceData;
         }
 
-        /// <summary>
-        /// Nested Builder class (equivalent to Java's static nested class)
-        /// </summary>
         public class Builder
         {
             private string? _name;
@@ -177,7 +229,7 @@ namespace DecisionRules.Models
             private Dictionary<string, object>? _auditLog;
             private string? _ruleAlias;
             private bool? _locked;
-            private string? _ruleAliasInfo;
+            private object? _ruleAliasInfo;
             private string? _sessionId;
             private Dictionary<string, object>? _decisionTable;
             private object? _visualEditorData;
@@ -190,91 +242,42 @@ namespace DecisionRules.Models
             private object? _script;
             private List<string>? _selectedWebhookAliases;
             private object? _workflowData;
+            // New fields
+            private List<object>? _columns;
+            private string? _primaryKeyColumn;
+            private object? _data;
+            private List<object>? _sourceData;
 
-            public Builder SetName(string name)
-            {
-                _name = name;
-                return this;
-            }
+            public Builder SetName(string name) { _name = name; return this; }
+            public Builder SetDescription(string description) { _description = description; return this; }
+            public Builder SetInputSchema(object inputSchema) { _inputSchema = inputSchema; return this; }
+            public Builder SetOutputSchema(object outputSchema) { _outputSchema = outputSchema; return this; }
+            public Builder SetVersion(int version) { _version = version; return this; }
+            public Builder SetStatus(string status) { _status = status; return this; }
+            public Builder SetType(string type) { _type = type; return this; }
+            public Builder SetTags(List<string> tags) { _tags = tags; return this; }
+            public Builder SetAuditLog(Dictionary<string, object> auditLog) { _auditLog = auditLog; return this; }
+            public Builder SetVisualEditorData(object visualEditorData) { _visualEditorData = visualEditorData; return this; }
+            public Builder SetSelectedWebhookAliases(List<string> selectedWebhookAliases) { _selectedWebhookAliases = selectedWebhookAliases; return this; }
+            public Builder SetWorkflowData(object workflowData) { _workflowData = workflowData; return this; }
 
-            public Builder SetDescription(string description)
-            {
-                _description = description;
-                return this;
-            }
-
-            public Builder SetInputSchema(object inputSchema)
-            {
-                _inputSchema = inputSchema;
-                return this;
-            }
-
-            public Builder SetOutputSchema(object outputSchema)
-            {
-                _outputSchema = outputSchema;
-                return this;
-            }
-
-            public Builder SetVersion(int version)
-            {
-                _version = version;
-                return this;
-            }
-
-            public Builder SetStatus(string status)
-            {
-                _status = status;
-                return this;
-            }
-
-            public Builder SetType(string type)
-            {
-                _type = type;
-                return this;
-            }
-
-            public Builder SetTags(List<string> tags)
-            {
-                _tags = tags;
-                return this;
-            }
-
-            public Builder SetAuditLog(Dictionary<string, object> auditLog)
-            {
-                _auditLog = auditLog;
-                return this;
-            }
-
-            public Builder SetVisualEditorData(object visualEditorData)
-            {
-                _visualEditorData = visualEditorData;
-                return this;
-            }
-
-            public Builder SetSelectedWebhookAliases(List<string> selectedWebhookAliases)
-            {
-                _selectedWebhookAliases = selectedWebhookAliases;
-                return this;
-            }
-
-            public Builder SetWorkflowData(object workflowData)
-            {
-                _workflowData = workflowData;
-                return this;
-
-            }
+            // New Builders
+            public Builder SetColumns(List<object> columns) { _columns = columns; return this; }
+            public Builder SetPrimaryKeyColumn(string primaryKeyColumn) { _primaryKeyColumn = primaryKeyColumn; return this; }
+            public Builder SetData(object data) { _data = data; return this; }
+            public Builder SetSourceData(List<object> sourceData) { _sourceData = sourceData; return this; }
 
             public Rule Build()
             {
-                // Matches the Java builder, which passes null for un-set reference types
-                // and DateTime.UtcNow for the two new Date() calls.
                 return new Rule(
                     _name, _description, _inputSchema, _outputSchema, _version,
                     DateTime.UtcNow, DateTime.UtcNow, _status, _baseId, _ruleId,
                     _type, _tags, _auditLog, _ruleAlias, _locked, _ruleAliasInfo,
                     _sessionId, _decisionTable, _visualEditorData, _compositionId,
                     _dataTree, _rules, _nodes, _userVariables, _previousBaseId,
-                    _script, _selectedWebhookAliases, _workflowData
+                    _script, _selectedWebhookAliases, _workflowData,
+                    // New args
+                    _columns, _primaryKeyColumn, _data, _sourceData
                 );
             }
         }

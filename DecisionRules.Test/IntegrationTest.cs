@@ -33,7 +33,7 @@ namespace DecisionRules.Test
 
             var rule = new Models.Rule
             {
-                Name = "Integration Flow", // CHANGED
+                Name = "Integration Flow",
                 Description = "",
                 Type = "integration-flow",
                 Status = "published",
@@ -41,119 +41,245 @@ namespace DecisionRules.Test
                 OutputSchema = new Dictionary<string, object> { { "output", new Dictionary<string, object>() } },
                 Tags = new List<string>(),
                 AuditLog = new Dictionary<string, object>
-                 {
-                     { "active", false },
-                     { "debug", new Dictionary<string, object> { { "active", false } } },
-                     { "ttl", 14 }
-                 },
-                            VisualEditorData = new Dictionary<string, object> // Maps to 'visualData'
-                 {
-                     { "scale", 1 },
-                     { "rotate", 0 },
-                     { "translate", new Dictionary<string, object> { { "x", -67 }, { "y", -1 } } }
-                 },
-                            // --- ADDED from JSON ---
-                            RuleAlias = "convinced-snake",
-                            CreatedIn = new DateTime(2025, 10, 23, 7, 31, 18, 650, DateTimeKind.Utc),
-                            LastUpdate = new DateTime(2025, 10, 23, 7, 31, 36, 301, DateTimeKind.Utc),
-                            // ---
-                            WorkflowData = new Dictionary<string, object>
-                 {
-                     { "nodes", new List<object>
-                         {
-                             new Dictionary<string, object> // Node 1 (START)
-                             {
-                                 { "connectors", new List<object>
-                                     {
-                                         new Dictionary<string, object>
-                                         {
-                                             { "type", "out" },
-                                             { "maxConnections", -1 },
-                                             { "subType", "none" },
-                                             { "id", "fbd5a179-588e-4e75-b1e3-73ef458a84a2" }, // ADDED
-                                             { "maxCount", 1 },
-                                             { "minCount", 1 }
-                                         }
-                                     }
-                                 },
-                                 { "id", "c2c8e47c" },
-                                 { "version", 1 },
-                                 { "type", "START" },
-                                 { "position", new Dictionary<string, object> { { "x", 167 }, { "y", 325 } } }
-                             },
-                             new Dictionary<string, object> // Node 2 (DATA_MANIPULATION)
-                             {
-                                 { "connectors", new List<object>
-                                     {
-                                         new Dictionary<string, object>
-                                         {
-                                             { "type", "out" },
-                                             { "maxConnections", -1 },
-                                             { "subType", "none" },
-                                             { "id", "894ffb64-e983-4701-bd3d-883ae0dfe4b0" }, // ADDED
-                                             { "maxCount", 1 },
-                                             { "minCount", 1 }
-                                         },
-                                         new Dictionary<string, object>
-                                         {
-                                             { "type", "in" },
-                                             { "maxConnections", -1 },
-                                             { "subType", "none" },
-                                             { "id", "ff995f0a-be34-422d-b1eb-0213dfa38ee4" }, // ADDED
-                                             { "maxCount", 1 },
-                                             { "minCount", 1 }
-                                         }
-                                     }
-                                 },
-                                 { "id", "c78d5ad9" }, // CHANGED
-                                 { "version", 1 },
-                                 { "type", "DATA_MANIPULATION" },
-                                 { "position", new Dictionary<string, object> { { "x", 540 }, { "y", 284 } } }, // CHANGED
-                                 { "name", "assign" },
-                                 { "data", new Dictionary<string, object>
-                                     {
-                                         { "mapping", new List<object>
-                                             {
-                                                 new Dictionary<string, object>
-                                                 {
-                                                     { "source", new Dictionary<string, object>
-                                                         {
-                                                             { "expression", new Dictionary<string, object>
-                                                                 {
-                                                                     { "type", 1 },
-                                                                     { "outputScalarValue", new Dictionary<string, object>
-                                                                         {
-                                                                             { "type", "function" },
-                                                                             { "value", "Hello!" }, // CHANGED
-                                                                             { "stringValue", "Hello!" } // CHANGED
-                                                                         }
-                                                                     }
-                                                                 }
-                                                             }
-                                                         }
-                                                     },
-                                                     { "target", new Dictionary<string, object> { { "path", "output.output" } } }
-                                                 }
-                                             }
-                                         },
-                                         { "guiSettings", new Dictionary<string, object> { { "showAll", false } } }
-                                     }
-                                 }
-                             }
-                         }
-                     },
-                     { "connections", new List<object> // CHANGED (structure and content)
-                         {
-                             new Dictionary<string, object>
-                             {
-                                 { "source", "fbd5a179-588e-4e75-b1e3-73ef458a84a2" },
-                                 { "target", "ff995f0a-be34-422d-b1eb-0213dfa38ee4" },
-                                 { "type", 0 },
-                                 { "id", "907c7b80-2529-4e3b-8d19-2ba41e472768" }
-                             }
-                         }
-                     }
-                 }
+    {
+        { "active", false },
+        { "debug", new Dictionary<string, object> { { "active", false } } },
+        { "ttl", 14 }
+    },
+                VisualEditorData = new Dictionary<string, object>
+    {
+        { "scale", 1 },
+        { "rotate", 0 },
+        { "translate", new Dictionary<string, object> { { "x", -66 }, { "y", -21 } } }
+    },
+                RuleAlias = "inland-wolf",
+                CreatedIn = new DateTime(2025, 12, 03, 11, 40, 52, 619, DateTimeKind.Utc),
+                LastUpdate = new DateTime(2025, 12, 03, 11, 42, 13, 646, DateTimeKind.Utc),
+                WorkflowData = new Dictionary<string, object>
+    {
+        { "nodes", new List<object>
+            {
+                new Dictionary<string, object> // Node 1 (START)
+                {
+                    { "connectors", new List<object>
+                        {
+                            new Dictionary<string, object>
+                            {
+                                { "type", "out" },
+                                { "maxConnections", -1 },
+                                { "subType", "none" },
+                                { "id", "fbd5a179-588e-4e75-b1e3-73ef458a84a2" },
+                                { "maxCount", 1 },
+                                { "minCount", 1 }
+                            }
+                        }
+                    },
+                    { "id", "c2c8e47c" },
+                    { "version", 1 },
+                    { "type", "START" },
+                    { "position", new Dictionary<string, object> { { "x", 167 }, { "y", 325 } } }
+                },
+                new Dictionary<string, object> // Node 2 (DATA_MANIPULATION)
+                {
+                    { "connectors", new List<object>
+                        {
+                            new Dictionary<string, object>
+                            {
+                                { "type", "out" },
+                                { "maxConnections", -1 },
+                                { "subType", "none" },
+                                { "id", "29610edc-df5b-4467-a502-5394a66f8f2d" },
+                                { "maxCount", 1 },
+                                { "minCount", 1 }
+                            },
+                            new Dictionary<string, object>
+                            {
+                                { "type", "in" },
+                                { "maxConnections", -1 },
+                                { "subType", "none" },
+                                { "id", "f518b2c4-6579-48d0-adc7-b631216dd610" },
+                                { "maxCount", 1 },
+                                { "minCount", 1 }
+                            }
+                        }
+                    },
+                    { "id", "7e85e5e6" },
+                    { "version", 1 },
+                    { "type", "DATA_MANIPULATION" },
+                    { "position", new Dictionary<string, object> { { "x", 500 }, { "y", 315 } } },
+                    { "name", "assign" },
+                    { "data", new Dictionary<string, object>
+                        {
+                            { "mapping", new List<object>
+                                {
+                                    new Dictionary<string, object>
+                                    {
+                                        { "source", new Dictionary<string, object>
+                                            {
+                                                { "expression", new Dictionary<string, object>
+                                                    {
+                                                        { "type", 1 },
+                                                        { "outputScalarValue", new Dictionary<string, object>
+                                                            {
+                                                                { "type", "function" },
+                                                                { "value", "Hello world!" },
+                                                                { "stringValue", "Hello world!" }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        { "target", new Dictionary<string, object> { { "path", "output.output" } } }
+                                    }
+                                }
+                            },
+                            { "guiSettings", new Dictionary<string, object> { { "showAll", false } } }
+                        }
+                    }
+                },
+                new Dictionary<string, object> // Node 3 (HTTP_CLIENT)
+                {
+                    { "connectors", new List<object>
+                        {
+                            new Dictionary<string, object>
+                            {
+                                { "type", "in" },
+                                { "maxConnections", -1 },
+                                { "subType", "none" },
+                                { "id", "caf5ad87-ff5d-4893-89f6-ecd839a2542f" },
+                                { "maxCount", 1 },
+                                { "minCount", 1 }
+                            },
+                            new Dictionary<string, object>
+                            {
+                                { "type", "out" },
+                                { "maxConnections", -1 },
+                                { "subType", "none" },
+                                { "id", "78883421-0045-4353-a901-3ead927470eb" },
+                                { "maxCount", 1 },
+                                { "minCount", 1 }
+                            }
+                        }
+                    },
+                    { "id", "cbfe3058" },
+                    { "version", 1 },
+                    { "type", "HTTP_CLIENT" },
+                    { "position", new Dictionary<string, object> { { "x", 316 }, { "y", 154 } } },
+                    { "name", "api" },
+                    { "data", new Dictionary<string, object>
+                        {
+                            { "url", "https://postman-echo.com/delay/3" },
+                            { "method", "GET" },
+                            { "requestName", "" },
+                            { "body", "" },
+                            { "bodyFormat", "json" },
+                            { "headers", new List<object>
+                                {
+                                    new Dictionary<string, object> { { "header", "" }, { "value", "" } }
+                                }
+                            },
+                            { "connectionReference", null }
+                        }
+                    }
+                }
+            }
+        },
+        { "connections", new List<object>
+            {
+                new Dictionary<string, object>
+                {
+                    { "source", "fbd5a179-588e-4e75-b1e3-73ef458a84a2" },
+                    { "target", "caf5ad87-ff5d-4893-89f6-ecd839a2542f" },
+                    { "type", 0 },
+                    { "id", "1e4ed9eb-122b-4bba-9e42-06b29c2feac9" }
+                },
+                new Dictionary<string, object>
+                {
+                    { "source", "78883421-0045-4353-a901-3ead927470eb" },
+                    { "target", "f518b2c4-6579-48d0-adc7-b631216dd610" },
+                    { "type", 0 },
+                    { "id", "057ba96b-c95c-4001-8d14-95153d0026c0" }
+                }
+            }
+        }
+    }
+            };
+
+            var lookupTableRule = new Models.Rule
+            {
+                Name = "Testing table 2",
+                Description = "",
+                Type = "lookup-table",
+                Status = "published",
+                RuleAlias = "enormous-goldfish",
+                CreatedIn = new DateTime(2025, 11, 25, 15, 41, 14, 863, DateTimeKind.Utc),
+                LastUpdate = new DateTime(2025, 11, 26, 09, 07, 50, 190, DateTimeKind.Utc),
+                Tags = new List<string>(),
+
+                // --- Lookup Table Specific Properties ---
+                PrimaryKeyColumn = "pk",
+
+                Columns = new List<object>
+    {
+        new Dictionary<string, object>
+        {
+            { "name", "Primary Key" },
+            { "alias", "pk" },
+            { "order", 0 },
+            { "isPrimaryKey", true }
+        },
+        new Dictionary<string, object>
+        {
+            { "name", "id" },
+            { "alias", "03EOXNMB" }
+        }
+    },
+
+                // The 'Data' property (Dictionary/Map format)
+                Data = new Dictionary<string, object>
+    {
+        { "Orange", new Dictionary<string, object> { { "pk", "Orange" }, { "03EOXNMB", "1" }, { "_position", 0 } } },
+        { "Door hinge", new Dictionary<string, object> { { "pk", "Door hinge" }, { "03EOXNMB", "2" }, { "_position", 1 } } },
+        { "Porridge", new Dictionary<string, object> { { "pk", "Porridge" }, { "03EOXNMB", "3" }, { "_position", 2 } } },
+        { "Four inch", new Dictionary<string, object> { { "pk", "Four inch" }, { "03EOXNMB", "4" }, { "_position", 3 } } },
+        { "Forage", new Dictionary<string, object> { { "pk", "Forage" }, { "03EOXNMB", "5" }, { "_position", 4 } } },
+        { "Storage", new Dictionary<string, object> { { "pk", "Storage" }, { "03EOXNMB", "6" }, { "_position", 5 } } }
+    },
+
+                // The 'SourceData' property (Array/List format)
+                SourceData = new List<object>
+    {
+        new Dictionary<string, object> { { "pk", "Orange" }, { "03EOXNMB", "1" }, { "_position", 0 } },
+        new Dictionary<string, object> { { "pk", "Door hinge" }, { "03EOXNMB", "2" }, { "_position", 1 } },
+        new Dictionary<string, object> { { "pk", "Porridge" }, { "03EOXNMB", "3" }, { "_position", 2 } },
+        new Dictionary<string, object> { { "pk", "Four inch" }, { "03EOXNMB", "4" }, { "_position", 3 } },
+        new Dictionary<string, object> { { "pk", "Forage" }, { "03EOXNMB", "5" }, { "_position", 4 } },
+        new Dictionary<string, object> { { "pk", "Storage" }, { "03EOXNMB", "6" }, { "_position", 5 } }
+    },
+
+                // --- Schemas & Meta ---
+                InputSchema = new Dictionary<string, object>
+    {
+        { "primaryKey", new Dictionary<string, object>() },
+        { "outputColumn", new Dictionary<string, object>() },
+        { "method", new Dictionary<string, object>() }
+    },
+                OutputSchema = new Dictionary<string, object>
+    {
+        { "output", new Dictionary<string, object>() }
+    },
+                AuditLog = new Dictionary<string, object>
+    {
+        { "active", false },
+        { "debug", new Dictionary<string, object> { { "active", false } } },
+        { "ttl", 14 }
+    },
+                RuleAliasInfo = new Dictionary<string, object>
+    {
+        { "usedOn", new List<object>() },
+        { "unique", true }
+    }
             };
 
             var dr = new DecisionRulesService(
@@ -182,6 +308,21 @@ namespace DecisionRules.Test
             Assert.IsNotNull(folder, "Folder was not created by path");
 
             Models.Rule createdRule = await dr.Management.CreateRuleAsync(rule, "/Folder Name");
+            Models.Rule craetedLookupTable = await dr.Management.CreateRuleAsync(lookupTableRule, "/Folder Name");
+            string requestBody = "{\"primaryKey\":\"A\",\"outputColumn\":{}}";
+
+            // Perform the rule solving
+            await dr.SolveAsync(
+                craetedLookupTable.RuleId,
+                requestBody,
+                1,
+              new SolverOptions.Builder().WithLookupMethod(LookupMethodOptions.LOOKUP_EXISTS).Build()
+            );
+
+            await dr.SolveAsync(
+                craetedLookupTable.RuleId,
+                requestBody
+            );
             Console.WriteLine("--- CreateRuleAsync ---");
             Console.WriteLine(JsonSerializer.Serialize(createdRule));
 
