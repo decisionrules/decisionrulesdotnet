@@ -10,8 +10,8 @@
 		<PackageTags>decision;decisionrules;rule;ruleengine;engine;api</PackageTags>
 
 		<!-- Update version numbers as appropriate -->
-		<AssemblyVersion>4.0.4</AssemblyVersion>
-		<Version>4.0.4</Version>
+		<AssemblyVersion>4.0.5</AssemblyVersion>
+		<Version>4.0.5</Version>
 
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Copyright>Custom property</Copyright>
@@ -40,7 +40,6 @@
 
 		<!-- System.Text.Json is part of .NET 8, so explicit reference usually not needed -->
 		<!-- Keeping it only if you need a specific version -->
-		<PackageReference Include="System.Text.Json" Version="9.0.0" />
 	</ItemGroup>
 
 </Project>

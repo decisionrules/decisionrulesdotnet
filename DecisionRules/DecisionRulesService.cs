@@ -73,7 +73,7 @@ namespace DecisionRules
         /// <param name="signature">The signature from the request header.</param>
         /// <param name="secret">Your webhook secret.</param>
         /// <returns>True if the signature is valid, otherwise false.</returns>
-        public bool ValidateWebhookSignature(string payload, string signature, string secret)
+        public static bool ValidateWebhookSignature(string payload, string signature, string secret)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace DecisionRules
             }
         }
 
-        private string BytesToHex(byte[] bytes)
+        private static string BytesToHex(byte[] bytes)
         {
             var sb = new StringBuilder(bytes.Length * 2);
             foreach (byte b in bytes)
