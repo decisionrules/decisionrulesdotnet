@@ -11,6 +11,7 @@ namespace DecisionRules.Test
         [TestMethod]
         public async Task ManagementTest()
         {
+            Console.WriteLine($"Environment.Version: {Environment.Version}");
             // --- Environment Variable Check ---
             string host = Environment.GetEnvironmentVariable("HOST");
             string solverKey = Environment.GetEnvironmentVariable("SOLVER_KEY");
@@ -232,38 +233,37 @@ namespace DecisionRules.Test
         new Dictionary<string, object>
         {
             { "name", "id" },
-            { "alias", "03EOXNMB" }
+            { "alias", "hello" }
         }
     },
 
                 // The 'Data' property (Dictionary/Map format)
                 Data = new Dictionary<string, object>
     {
-        { "Orange", new Dictionary<string, object> { { "pk", "Orange" }, { "03EOXNMB", "1" }, { "_position", 0 } } },
-        { "Door hinge", new Dictionary<string, object> { { "pk", "Door hinge" }, { "03EOXNMB", "2" }, { "_position", 1 } } },
-        { "Porridge", new Dictionary<string, object> { { "pk", "Porridge" }, { "03EOXNMB", "3" }, { "_position", 2 } } },
-        { "Four inch", new Dictionary<string, object> { { "pk", "Four inch" }, { "03EOXNMB", "4" }, { "_position", 3 } } },
-        { "Forage", new Dictionary<string, object> { { "pk", "Forage" }, { "03EOXNMB", "5" }, { "_position", 4 } } },
-        { "Storage", new Dictionary<string, object> { { "pk", "Storage" }, { "03EOXNMB", "6" }, { "_position", 5 } } }
+        { "Orange", new Dictionary<string, object> { { "pk", "Orange" }, { "hello", "1" }, { "_position", 0 } } },
+        { "Door hinge", new Dictionary<string, object> { { "pk", "Door hinge" }, { "hello", "2" }, { "_position", 1 } } },
+        { "Porridge", new Dictionary<string, object> { { "pk", "Porridge" }, { "hello", "3" }, { "_position", 2 } } },
+        { "Four inch", new Dictionary<string, object> { { "pk", "Four inch" }, { "hello", "4" }, { "_position", 3 } } },
+        { "Forage", new Dictionary<string, object> { { "pk", "Forage" }, { "hello", "5" }, { "_position", 4 } } },
+        { "Storage", new Dictionary<string, object> { { "pk", "Storage" }, { "hello", "6" }, { "_position", 5 } } }
     },
 
                 // The 'SourceData' property (Array/List format)
                 SourceData = new List<object>
     {
-        new Dictionary<string, object> { { "pk", "Orange" }, { "03EOXNMB", "1" }, { "_position", 0 } },
-        new Dictionary<string, object> { { "pk", "Door hinge" }, { "03EOXNMB", "2" }, { "_position", 1 } },
-        new Dictionary<string, object> { { "pk", "Porridge" }, { "03EOXNMB", "3" }, { "_position", 2 } },
-        new Dictionary<string, object> { { "pk", "Four inch" }, { "03EOXNMB", "4" }, { "_position", 3 } },
-        new Dictionary<string, object> { { "pk", "Forage" }, { "03EOXNMB", "5" }, { "_position", 4 } },
-        new Dictionary<string, object> { { "pk", "Storage" }, { "03EOXNMB", "6" }, { "_position", 5 } }
+        new Dictionary<string, object> { { "pk", "Orange" }, { "hello", "1" }, { "_position", 0 } },
+        new Dictionary<string, object> { { "pk", "Door hinge" }, { "hello", "2" }, { "_position", 1 } },
+        new Dictionary<string, object> { { "pk", "Porridge" }, { "hello", "3" }, { "_position", 2 } },
+        new Dictionary<string, object> { { "pk", "Four inch" }, { "hello", "4" }, { "_position", 3 } },
+        new Dictionary<string, object> { { "pk", "Forage" }, { "hello", "5" }, { "_position", 4 } },
+        new Dictionary<string, object> { { "pk", "Storage" }, { "hello", "6" }, { "_position", 5 } }
     },
 
                 // --- Schemas & Meta ---
                 InputSchema = new Dictionary<string, object>
     {
         { "primaryKey", new Dictionary<string, object>() },
-        { "outputColumn", new Dictionary<string, object>() },
-        { "method", new Dictionary<string, object>() }
+        { "outputColumn", new Dictionary<string, object>() }
     },
                 OutputSchema = new Dictionary<string, object>
     {
@@ -308,6 +308,7 @@ namespace DecisionRules.Test
             Assert.IsNotNull(folder, "Folder was not created by path");
 
             Models.Rule createdRule = await dr.Management.CreateRuleAsync(rule, "/Folder Name");
+            Console.WriteLine(JsonSerializer.Serialize(lookupTableRule));
             Models.Rule craetedLookupTable = await dr.Management.CreateRuleAsync(lookupTableRule, "/Folder Name");
             string requestBody = "{\"primaryKey\":\"A\",\"outputColumn\":{}}";
 

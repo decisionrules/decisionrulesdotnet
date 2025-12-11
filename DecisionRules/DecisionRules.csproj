@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net10.0</TargetFramework>
+		<TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
 
 		<Description>Simple library that allows you to easily connect to Decisionrules.io from your application.</Description>
 		<PackageIcon>dricon.png</PackageIcon>
@@ -10,8 +10,8 @@
 		<PackageTags>decision;decisionrules;rule;ruleengine;engine;api</PackageTags>
 
 		<!-- Update version numbers as appropriate -->
-		<AssemblyVersion>4.0.5</AssemblyVersion>
-		<Version>4.0.5</Version>
+		<AssemblyVersion>4.0.6</AssemblyVersion>
+		<Version>4.0.6</Version>
 
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Copyright>Custom property</Copyright>
@@ -33,13 +33,21 @@
 		<None Include="..\README.md" Pack="True" PackagePath="\" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<!-- Newtonsoft.Json is still supported -->
-		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.10" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.0" />
+	</ItemGroup>
 
-		<!-- System.Text.Json is part of .NET 8, so explicit reference usually not needed -->
-		<!-- Keeping it only if you need a specific version -->
+	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.10" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.1" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 
 </Project>
