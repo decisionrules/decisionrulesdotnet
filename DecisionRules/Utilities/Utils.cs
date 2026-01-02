@@ -64,17 +64,14 @@ namespace DecisionRules.Utilities
         /// </summary>
         public static DecisionRulesErrorException HandleError(Exception e)
         {
-            // e.StackTrace is already a formatted string in C#.
-            string stackTrace = e.StackTrace ?? "No stack trace available.";
-
             if (e != null && !string.IsNullOrEmpty(e.Message))
             {
-                return new DecisionRulesErrorException(e.Message, stackTrace);
+                return new DecisionRulesErrorException(e.Message, e);
             }
 
             // Fallback message from the Java code
             string message = $"Call ended with status: {e?.Message ?? "Unknown"}";
-            return new DecisionRulesErrorException(message, stackTrace);
+            return new DecisionRulesErrorException(message, e);
         }
 
         // Overload for requests without a body (like GET)
@@ -89,45 +86,36 @@ namespace DecisionRules.Utilities
         /// </summary>
         public static async Task<string> DoCallAsync(HttpClient client, Uri url, string solverKey, HttpMethod method, object body)
         {
-            try
+            // HttpRequestMessage is disposable
+            using (var request = new HttpRequestMessage(method, url))
             {
-                // HttpRequestMessage is disposable
-                using (var request = new HttpRequestMessage(method, url))
+                // 1. Create Headers (replaces createHeaders)
+                if (string.IsNullOrEmpty(solverKey))
                 {
-                    // 1. Create Headers (replaces createHeaders)
-                    if (string.IsNullOrEmpty(solverKey))
-                    {
-                        throw new ArgumentException("Solver key is not set.");
-                    }
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", solverKey);
-                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    // 2. Add Content (if body is provided)
-                    if (body != null)
-                    {
-                        string jsonPayload = JsonSerializer.Serialize(body, _jsonOptions);
-                        // StringContent sets the "Content-Type: application/json" header
-                        request.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                    }
-
-                    // 3. Make the call
-                    using (HttpResponseMessage response = await client.SendAsync(request))
-                    {
-                        string responseBody = await response.Content.ReadAsStringAsync();
-
-                        // EnsureSuccessStatusCode throws an HttpRequestException if the
-                        // status code is not 2xx, mimicking RestTemplate's default behavior.
-                        response.EnsureSuccessStatusCode();
-
-                        return responseBody;
-                    }
+                    throw new ArgumentException("Solver key is not set.");
                 }
-            }
-            catch (Exception e)
-            {
-                // This mimics the Java code's behavior: print message and return null.
-                Console.WriteLine(e.Message);
-                return null;
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", solverKey);
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                // 2. Add Content (if body is provided)
+                if (body != null)
+                {
+                    string jsonPayload = JsonSerializer.Serialize(body, _jsonOptions);
+                    // StringContent sets the "Content-Type: application/json" header
+                    request.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                }
+
+                // 3. Make the call
+                using (HttpResponseMessage response = await client.SendAsync(request))
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    // EnsureSuccessStatusCode throws an HttpRequestException if the
+                    // status code is not 2xx, mimicking RestTemplate's default behavior.
+                    response.EnsureSuccessStatusCode();
+
+                    return responseBody;
+                }
             }
         }
 

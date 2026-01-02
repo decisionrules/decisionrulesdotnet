@@ -11,7 +11,7 @@
     using System.Threading.Tasks;
 
 
-    public class Management
+    public class Management : IManagement
     {
         private readonly DecisionRulesService _service;
         private readonly ManagementApi managementApi;

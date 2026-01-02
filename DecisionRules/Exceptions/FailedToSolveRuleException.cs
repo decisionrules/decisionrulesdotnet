@@ -10,22 +10,16 @@ namespace DecisionRules.Exceptions
         /// <summary>
         /// Stores the string representation of the stack trace, as seen in the Java code.
         /// </summary>
-        public string StackTraceString { get; }
+        public DecisionRulesErrorException(){ }
 
         /// <summary>
         /// Constructor matching the Java code's usage in Utils.handleError.
         /// </summary>
-        public DecisionRulesErrorException(string message, string stackTrace) : base(message)
-        {
-            StackTraceString = stackTrace;
-        }
+        public DecisionRulesErrorException(string message) : base(message){ }
 
         /// <summary>
         /// A more idiomatic C# constructor that accepts an inner exception.
         /// </summary>
-        public DecisionRulesErrorException(string message, Exception innerException) : base(message, innerException)
-        {
-            StackTraceString = innerException?.ToString();
-        }
+        public DecisionRulesErrorException(string message, Exception innerException) : base(message, innerException){ }
     }
 }

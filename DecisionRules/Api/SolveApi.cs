@@ -46,13 +46,25 @@ namespace DecisionRules.Api
             {
                 // Assumes a static Utils.GetBaseURL method exists
                 string baseUrl = Utils.GetBaseURL(_options.Host);
-                return new Uri(baseUrl + path);
+                return new Uri(new Uri(baseUrl), path);
             }
             catch (Exception e)
             {
                 // Wrap and re-throw for better context
                 throw new Exception("Failed to create solver URL", e);
             }
+        }
+
+        public async Task<List<U>> SolveApiAsync<T, U>(string ruleId, T data, int? version, SolverOptions? solverOptions = null)
+        {
+            var response = await CallSolveApiAsync(ruleId, data, version, solverOptions);
+            return await ResponseDeserializer.DeserializeSolverResponse<U>(response);
+        }
+
+        public async Task<string> SolveApiAsync(string ruleId, object data, int? version, SolverOptions? solverOptions = null)
+        {
+            var response = await CallSolveApiAsync(ruleId, data, version, solverOptions);
+            return await response.Content.ReadAsStringAsync();
         }
 
         /// <summary>
@@ -66,57 +78,42 @@ namespace DecisionRules.Api
         /// but it was unused in the original Java logic and has no effect.
         /// </param>
         /// <returns>The raw JSON string result from the API, or null if an error occurs.</returns>
-        public async Task<string?> SolveApiAsync(string ruleId, object data, int? version, SolverOptions? solverOptions = null)
+        public async Task<HttpResponseMessage> CallSolveApiAsync(string ruleId, object data, int? version, SolverOptions? solverOptions = null)
         {
-            try
+            // Create the URL
+            Uri url = CreateUrl(ruleId, version);
+              
+            // --- Logic from createHeaders ---
+            if (string.IsNullOrEmpty(_options.SolverKey))
             {
-                // Create the URL
-                Uri url = CreateUrl(ruleId, version);
-
-                // --- Logic from createHeaders ---
-                if (string.IsNullOrEmpty(_options.SolverKey))
-                {
-                    throw new ArgumentException("Solver key is not set.");
-                }
-
-                // --- Prepare Payload ---
-                // Replicates: data instanceof String ? data : mapper.writeValueAsString(data)
-                string dataJson = data is string dataString
-                    ? dataString
-                    : JsonSerializer.Serialize(data, _jsonOptions);
-
-                // Replicates: String.format("{ \"data\": %s}", dataJson)
-                string jsonPayload = $"{{ \"data\": {dataJson} }}";
-
-                // --- Build and Send Request ---
-                using (var request = new HttpRequestMessage(HttpMethod.Post, url))
-                {
-                    // Set Authorization header
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.SolverKey);
-
-                    // Set Headers
-                    Utils.PopulateDefaultHeaders(_httpClient, _options, solverOptions);
-
-                    // Set Content and Content-Type
-                    request.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
-                    // Set Accept header (implied by createHeaders's ContentType setting)
-                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    using (HttpResponseMessage response = await _httpClient.SendAsync(request))
-                    {
-                        // Throws exception on non-success status, similar to RestTemplate
-                        response.EnsureSuccessStatusCode();
-
-                        return await response.Content.ReadAsStringAsync();
-                    }
-                }
+                throw new ArgumentException("Solver key is not set.");
             }
-            catch (Exception e)
+
+            // --- Prepare Payload ---
+            // Replicates: data instanceof String ? data : mapper.writeValueAsString(data)
+            string dataJson = data is string dataString
+                ? dataString
+                : JsonSerializer.Serialize(data, _jsonOptions);
+
+            // Replicates: String.format("{ \"data\": %s}", dataJson)
+            string jsonPayload = $"{{ \"data\": {dataJson} }}";
+
+            // --- Build and Send Request ---
+            using (var request = new HttpRequestMessage(HttpMethod.Post, url))
             {
-                // Replicates the original Java code's error handling
-                Console.WriteLine(e.Message);
-                return null;
+                // Set Authorization header
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.SolverKey);
+
+                // Set Headers
+                Utils.PopulateDefaultHeaders(_httpClient, _options, solverOptions);
+
+                // Set Content and Content-Type
+                request.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+                // Set Accept header (implied by createHeaders's ContentType setting)
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                return await _httpClient.SendAsync(request);
             }
         }
     }

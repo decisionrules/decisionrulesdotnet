@@ -16,8 +16,8 @@ namespace DecisionRules
     /// </summary>
     public partial class DecisionRulesService
     {
-        public Management Management { get; }
-        public JobService Job { get; }
+        public virtual IManagement Management { get; }
+        public virtual IJobService Job { get; }
 
         private readonly HttpClient _httpClient;
         public readonly DecisionRulesOptions _options;
@@ -48,7 +48,7 @@ namespace DecisionRules
         /// <param name="version">Version of the rule (can be null).</param>
         /// <param name="solverOptions">Optional solver options.</param>
         /// <returns>The raw JSON string response from the API.</returns>
-        public async Task<string> SolveAsync(string ruleIdOrAlias, object input, int? version = null, SolverOptions? solverOptions = null)
+        public virtual async Task<string> SolveAsync(string ruleIdOrAlias, object input, int? version = null, SolverOptions? solverOptions = null)
         {
             return await solveApi.SolveApiAsync(ruleIdOrAlias, input, version, solverOptions);
         }
@@ -61,9 +61,22 @@ namespace DecisionRules
         /// <param name="version">Version of the rule (can be null).</param>
         /// <param name="solverOptions">Optional solver options.</param>
         /// <returns>The raw JSON string response from the API.</returns>
-        public async Task<string> SolveAsync(string ruleIdOrAlias, string input, int? version = null, SolverOptions? solverOptions = null)
+        public virtual async Task<string> SolveAsync(string ruleIdOrAlias, string input, int? version = null, SolverOptions? solverOptions = null)
         {
             return await solveApi.SolveApiAsync(ruleIdOrAlias, input, version, solverOptions);
+        }
+
+        /// <summary>
+        /// Solves a specific version of a rule with the provided data and optional solver options.
+        /// </summary>
+        /// <param name="ruleIdOrAlias">The ID or alias of the rule.</param>
+        /// <param name="input">The input data object or JSON string.</param>
+        /// <param name="version">Version of the rule (can be null).</param>
+        /// <param name="solverOptions">Optional solver options.</param>
+        /// <returns>The raw JSON string response from the API.</returns>
+        public virtual  async Task<List<U>> SolveAsync<T, U>(string ruleIdOrAlias, T input, int? version = null, SolverOptions? solverOptions = null)
+        {
+            return await solveApi.SolveApiAsync<T, U>(ruleIdOrAlias, input, version, solverOptions);
         }
 
         /// <summary>
