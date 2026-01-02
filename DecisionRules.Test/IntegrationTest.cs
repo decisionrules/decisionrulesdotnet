@@ -5,6 +5,12 @@ using System.Text.Json;
 
 namespace DecisionRules.Test
 {
+    class LUTResponse()
+    {
+        public bool Output {  get; set; }
+    }
+
+
     [TestClass]
     public sealed class IntegrationTest
     {
@@ -313,17 +319,24 @@ namespace DecisionRules.Test
             string requestBody = "{\"primaryKey\":\"A\",\"outputColumn\":{}}";
 
             // Perform the rule solving
-            await dr.SolveAsync(
+            var solve1 = await dr.SolveAsync<String,LUTResponse>(
                 craetedLookupTable.RuleId,
                 requestBody,
                 1,
               new SolverOptions.Builder().WithLookupMethod(LookupMethodOptions.LOOKUP_EXISTS).Build()
             );
 
-            await dr.SolveAsync(
+            Console.WriteLine("--- Solve rule ---");
+            Console.WriteLine(JsonSerializer.Serialize(solve1));
+
+            var solve2 = await dr.SolveAsync(
                 craetedLookupTable.RuleId,
                 requestBody
             );
+
+            Console.WriteLine("--- Solve rule ---");
+            Console.WriteLine(JsonSerializer.Serialize(solve2));
+
             Console.WriteLine("--- CreateRuleAsync ---");
             Console.WriteLine(JsonSerializer.Serialize(createdRule));
 

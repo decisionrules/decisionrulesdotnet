@@ -49,21 +49,13 @@ namespace DecisionRules.Api
         /// </summary>
         public async Task<Job> StartJobApiAsync(DecisionRulesOptions options, string ruleIdOrAlias, object inputData, int? version)
         {
-            try
-            {
-                // Handle nullable version: "" if null, otherwise the number
-                string versionStr = version?.ToString() ?? "";
-                Uri url = GetCategoryUrl(options.Host, new[] { "start", ruleIdOrAlias, versionStr });
+            // Handle nullable version: "" if null, otherwise the number
+            string versionStr = version?.ToString() ?? "";
+            Uri url = GetCategoryUrl(options.Host, new[] { "start", ruleIdOrAlias, versionStr });
 
-                string responseJson = await Utils.DoCallAsync(_httpClient, url, options.SolverKey, HttpMethod.Post, inputData);
+            string responseJson = await Utils.DoCallAsync(_httpClient, url, options.SolverKey, HttpMethod.Post, inputData);
 
-                return JsonSerializer.Deserialize<Job>(responseJson, _jsonOptions);
-            }
-            catch (Exception e)
-            {
-                // Propagate the exception
-                throw;
-            }
+            return JsonSerializer.Deserialize<Job>(responseJson, _jsonOptions);
         }
 
         /// <summary>
@@ -71,19 +63,12 @@ namespace DecisionRules.Api
         /// </summary>
         public async Task<Job> CancelJobApiAsync(DecisionRulesOptions options, string jobId)
         {
-            try
-            {
-                Uri url = GetCategoryUrl(options.Host, new[] { "cancel", jobId });
+            Uri url = GetCategoryUrl(options.Host, new[] { "cancel", jobId });
 
-                // No input data for cancel, so pass null
-                string responseJson = await Utils.DoCallAsync(_httpClient, url, options.SolverKey, HttpMethod.Post);
+            // No input data for cancel, so pass null
+            string responseJson = await Utils.DoCallAsync(_httpClient, url, options.SolverKey, HttpMethod.Post);
 
-                return JsonSerializer.Deserialize<Job>(responseJson, _jsonOptions);
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
+            return JsonSerializer.Deserialize<Job>(responseJson, _jsonOptions);
         }
 
         /// <summary>

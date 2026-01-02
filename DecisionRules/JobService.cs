@@ -9,7 +9,7 @@
     /// <summary>
     /// Provides access to the DecisionRules Job API endpoints.
     /// </summary>
-    public class JobService
+    public class JobService : IJobService
     {
         private readonly DecisionRulesService _service;
         private readonly JobApi jobApi;
@@ -20,7 +20,7 @@
             jobApi = new JobApi(httpClient);
         }
 
-        public async Task<Job> StartAsync(string ruleIdOrAlias, object inputData, int? version = null)
+        public virtual async Task<Job> StartAsync(string ruleIdOrAlias, object inputData, int? version = null)
         {
             try
             {
@@ -32,7 +32,7 @@
             }
         }
 
-        public async Task<Job> CancelAsync(string jobId)
+        public virtual async Task<Job> CancelAsync(string jobId)
         {
             try
             {
@@ -44,7 +44,7 @@
             }
         }
 
-        public async Task<Job> GetInfoAsync(string jobId)
+        public virtual async Task<Job> GetInfoAsync(string jobId)
         {
             try
             {
