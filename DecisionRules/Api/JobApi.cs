@@ -35,7 +35,7 @@ namespace DecisionRules.Api
                 // Filter out null or empty strings before joining
                 var validPathSegments = apiPath.Where(pathParam => !string.IsNullOrEmpty(pathParam));
                 string path = $"/job/{string.Join("/", validPathSegments)}";
-                return new Uri(baseUrl + path);
+                return new Uri(new Uri(baseUrl), path);
             }
             catch (Exception e)
             {

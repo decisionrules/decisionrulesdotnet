@@ -44,7 +44,7 @@ namespace DecisionRules.Api
                 var validPathSegments = apiPath.Where(pathParam => !string.IsNullOrEmpty(pathParam));
                 string path = $"/api/{category.GetValue()}/{string.Join("/", validPathSegments)}";
 
-                string fullUrl = baseUrl + path;
+                Uri fullUrl = new Uri(new Uri(baseUrl), path);
 
                 if (queryParams != null && queryParams.Count > 0)
                 {
@@ -53,10 +53,10 @@ namespace DecisionRules.Api
                         .Where(entry => entry.Value != null)
                         .ToDictionary(entry => entry.Key, entry => entry.Value);
 
-                    fullUrl = QueryHelpers.AddQueryString(fullUrl, validParams);
+                    fullUrl = new Uri(QueryHelpers.AddQueryString(fullUrl.OriginalString, validParams));
                 }
 
-                return new Uri(fullUrl);
+                return fullUrl;
             }
             catch (Exception e)
             {

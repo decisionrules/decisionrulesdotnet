@@ -46,7 +46,7 @@ namespace DecisionRules.Api
             {
                 // Assumes a static Utils.GetBaseURL method exists
                 string baseUrl = Utils.GetBaseURL(_options.Host);
-                return new Uri(baseUrl + path);
+                return new Uri(new Uri(baseUrl), path);
             }
             catch (Exception e)
             {
