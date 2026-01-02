@@ -53,7 +53,7 @@ namespace DecisionRules.Api
                         .Where(entry => entry.Value != null)
                         .ToDictionary(entry => entry.Key, entry => entry.Value);
 
-                    fullUrl = new Uri(QueryHelpers.AddQueryString(fullUrl.OriginalString, validParams));
+                    fullUrl = new Uri(QueryHelpers.AddQueryString(fullUrl.ToString(), validParams));
                 }
 
                 return fullUrl;
