@@ -24,9 +24,23 @@ namespace DecisionRules
         private readonly JsonSerializerOptions _jsonSerializerOptions;
         private readonly SolveApi solveApi;
 
+        private static readonly HttpClient SharedHttpClient = new HttpClient(
+            new SocketsHttpHandler
+            {
+                PooledConnectionLifetime = TimeSpan.FromMinutes(2)
+            });
+
         public DecisionRulesService(DecisionRulesOptions options)
+            : this(options, SharedHttpClient)
         {
-            _httpClient = new HttpClient();
+        }
+
+        public DecisionRulesService(DecisionRulesOptions options, HttpClient httpClient)
+        {
+            ArgumentNullException.ThrowIfNull(options);
+            ArgumentNullException.ThrowIfNull(httpClient);
+
+            _httpClient = httpClient;
             _options = options;
 
             _jsonSerializerOptions = new JsonSerializerOptions

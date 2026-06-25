@@ -2,7 +2,6 @@
 using DecisionRules.Utilities;
 using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -101,17 +100,10 @@ namespace DecisionRules.Api
             // --- Build and Send Request ---
             using (var request = new HttpRequestMessage(HttpMethod.Post, url))
             {
-                // Set Authorization header
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.SolverKey);
-
-                // Set Headers
-                Utils.PopulateDefaultHeaders(_httpClient, _options, solverOptions);
+                Utils.PopulateRequestHeaders(request, _options, solverOptions);
 
                 // Set Content and Content-Type
                 request.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
-                // Set Accept header (implied by createHeaders's ContentType setting)
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 return await _httpClient.SendAsync(request);
             }

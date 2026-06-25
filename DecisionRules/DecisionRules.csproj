@@ -10,8 +10,8 @@
 		<PackageTags>decision;decisionrules;rule;ruleengine;engine;api</PackageTags>
 
 		<!-- Update version numbers as appropriate -->
-		<AssemblyVersion>4.0.7</AssemblyVersion>
-		<Version>4.0.7</Version>
+		<AssemblyVersion>4.0.10</AssemblyVersion>
+		<Version>4.0.10</Version>
 
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Copyright>Custom property</Copyright>

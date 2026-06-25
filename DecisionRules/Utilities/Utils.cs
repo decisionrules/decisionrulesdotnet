@@ -166,5 +166,45 @@ namespace DecisionRules.Utilities
                     solverOptions?.LookupMethod.ToString());
             }
         }
+
+        public static void PopulateRequestHeaders(
+            HttpRequestMessage request,
+            DecisionRulesOptions options,
+            SolverOptions? solverOptions = null)
+        {
+            ArgumentNullException.ThrowIfNull(request);
+
+            if (string.IsNullOrEmpty(options?.SolverKey))
+            {
+                throw new InvalidOperationException("Solver key missing.");
+            }
+
+            request.Headers.Authorization =
+                new AuthenticationHeaderValue("Bearer", options.SolverKey);
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.Add("X-Debug",
+                (solverOptions?.Debug ?? false).ToString().ToLowerInvariant());
+
+            if (!string.IsNullOrEmpty(solverOptions?.CorrId))
+            {
+                request.Headers.Add("X-Correlation-Id", solverOptions.CorrId);
+            }
+
+            request.Headers.Add("X-Strategy", solverOptions?.Strategy?.ToString() ?? "STANDARD");
+            request.Headers.Add("X-Audit",
+                (solverOptions?.Audit ?? false).ToString().ToLowerInvariant());
+
+            if (solverOptions?.AuditTtl.HasValue == true)
+            {
+                request.Headers.Add("X-Audit-Ttl",
+                    solverOptions.AuditTtl.Value.ToString());
+            }
+
+            if (solverOptions?.LookupMethod.HasValue == true)
+            {
+                request.Headers.Add("X-Lookup-Method",
+                    solverOptions.LookupMethod.Value.ToString());
+            }
+        }
     }
 }

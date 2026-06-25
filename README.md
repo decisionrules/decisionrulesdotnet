@@ -228,6 +228,37 @@ var options = new DecisionRulesOptions("YOUR_HOST", "YOUR_SOLVER_KEY", "YOUR_MAN
 var dr = new DecisionRulesService(options);
 ```
 
+The default constructor uses a shared `HttpClient` configured with `PooledConnectionLifetime`
+to avoid creating a new connection pool for every `DecisionRulesService` instance.
+
+If your application already manages `HttpClient` lifetime, pass your own client:
+
+```csharp
+using DecisionRules;
+using System;
+using System.Net.Http;
+
+var handler = new SocketsHttpHandler
+{
+    PooledConnectionLifetime = TimeSpan.FromMinutes(2)
+};
+
+var httpClient = new HttpClient(handler);
+var options = new DecisionRulesOptions("YOUR_HOST", "YOUR_SOLVER_KEY", "YOUR_MANAGEMENT_KEY");
+var dr = new DecisionRulesService(options, httpClient);
+```
+
+When using `IHttpClientFactory`, register the SDK as a typed client:
+
+```csharp
+using DecisionRules;
+
+services.AddSingleton(
+    new DecisionRulesOptions("YOUR_HOST", "YOUR_SOLVER_KEY", "YOUR_MANAGEMENT_KEY"));
+
+services.AddHttpClient<DecisionRulesService>();
+```
+
 ### Solver API Call Example
 
 Calls can be made with the top-level `SolveAsync` method. It returns a raw JSON string for you to process.
